@@ -11,7 +11,10 @@ const convexClient = env.NEXT_PUBLIC_CONVEX_URL
   : null;
 
 export function AppProviders({ children }: { children: ReactNode }) {
-  if (featureFlags.clerkConfigured && env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+  if (
+    featureFlags.clerkUiConfigured &&
+    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  ) {
     const content = convexClient ? (
       <ConvexProviderWithClerk client={convexClient} useAuth={useAuth}>
         {children}

@@ -19,8 +19,11 @@ const env = {
 };
 
 export const featureFlags = {
+  clerkUiConfigured: Boolean(env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY),
   clerkConfigured: Boolean(
-    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && env.CLERK_FRONTEND_API_URL,
+    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
+      env.CLERK_FRONTEND_API_URL &&
+      process.env.CLERK_SECRET_KEY,
   ),
   convexConfigured: Boolean(
     env.NEXT_PUBLIC_CONVEX_URL && env.CONVEX_DEPLOYMENT,

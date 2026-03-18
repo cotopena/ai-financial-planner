@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { featureFlags } from "@/lib/env";
 
 export function AuthMenu() {
-  if (!featureFlags.clerkConfigured) {
+  if (!featureFlags.clerkUiConfigured) {
     return (
       <Button asChild size="sm" variant="outline">
         <Link href={"/sign-in" as Route}>Configure Clerk</Link>
