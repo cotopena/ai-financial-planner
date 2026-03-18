@@ -367,9 +367,7 @@ export default defineSchema({
     actionType: v.string(),
     actionsConsumed: v.number(),
     providerCostUsd: v.number(),
-  })
-    .index("by_user", ["userId"])
-    .index("by_user_period", ["userId", "_creationTime"]),
+  }).index("by_user_period", ["userId"]),
 
   scenario_snapshot_meta: defineTable({
     scenarioId: v.id("scenarios"),

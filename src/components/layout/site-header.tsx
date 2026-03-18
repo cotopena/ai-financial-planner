@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -42,10 +43,10 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-3">
           <Button asChild size="sm" variant="ghost">
-            <Link href="/sign-in">Sign in</Link>
+            <Link href={"/sign-in" as Route}>Sign in</Link>
           </Button>
           <Button asChild size="sm">
-            <Link href="/sign-up">Start planning</Link>
+            <Link href={"/sign-up" as Route}>Start planning</Link>
           </Button>
         </div>
       </div>

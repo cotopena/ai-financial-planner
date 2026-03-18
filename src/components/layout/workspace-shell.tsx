@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Route } from "next";
 import Link from "next/link";
 import { AuthMenu } from "@/components/auth/auth-menu";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +84,7 @@ export function WorkspaceShell({
               {nav.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={item.href as Route}
                   className="block rounded-2xl px-3 py-3 text-sm font-medium transition-colors hover:bg-accent"
                 >
                   {item.label}

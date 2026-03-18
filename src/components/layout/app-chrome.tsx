@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Route } from "next";
 import Link from "next/link";
 import { AuthMenu } from "@/components/auth/auth-menu";
 import { ConfigurationStatus } from "@/components/layout/configuration-status";
@@ -39,7 +40,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
               {appNavItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={item.href as Route}
                   className="block rounded-2xl px-3 py-3 transition-colors hover:bg-accent"
                 >
                   <p className="font-medium">{item.label}</p>

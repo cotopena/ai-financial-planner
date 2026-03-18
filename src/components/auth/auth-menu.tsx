@@ -1,5 +1,6 @@
 "use client";
 
+import type { Route } from "next";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ export function AuthMenu() {
   if (!featureFlags.clerkConfigured) {
     return (
       <Button asChild size="sm" variant="outline">
-        <Link href="/sign-in">Configure Clerk</Link>
+        <Link href={"/sign-in" as Route}>Configure Clerk</Link>
       </Button>
     );
   }

@@ -1,5 +1,7 @@
+import type { Route } from "next";
+
 export type AppNavItem = {
-  href: string;
+  href: Route;
   label: string;
   description: string;
 };
@@ -49,20 +51,26 @@ export function buildScenarioNav({
   const basePath = `/app/businesses/${businessId}/scenarios/${scenarioId}`;
 
   return [
-    { href: `${basePath}/overview`, label: "Overview" },
-    { href: `${basePath}/setup`, label: "Setup" },
-    { href: `${basePath}/opening-funding`, label: "Opening & Funding" },
-    { href: `${basePath}/revenue/year-1`, label: "Revenue" },
-    { href: `${basePath}/payroll/year-1`, label: "Payroll" },
-    { href: `${basePath}/expenses/year-1`, label: "Expenses" },
-    { href: `${basePath}/cash-financing`, label: "Cash & Financing" },
+    { href: `${basePath}/overview` as Route, label: "Overview" },
+    { href: `${basePath}/setup` as Route, label: "Setup" },
     {
-      href: `${basePath}/statements/income-statement`,
+      href: `${basePath}/opening-funding` as Route,
+      label: "Opening & Funding",
+    },
+    { href: `${basePath}/revenue/year-1` as Route, label: "Revenue" },
+    { href: `${basePath}/payroll/year-1` as Route, label: "Payroll" },
+    { href: `${basePath}/expenses/year-1` as Route, label: "Expenses" },
+    {
+      href: `${basePath}/cash-financing` as Route,
+      label: "Cash & Financing",
+    },
+    {
+      href: `${basePath}/statements/income-statement` as Route,
       label: "Statements",
     },
-    { href: `${basePath}/diagnostics`, label: "Diagnostics" },
-    { href: `${basePath}/scenarios`, label: "Scenarios" },
-    { href: `${basePath}/imports/actuals`, label: "Imports" },
-    { href: `${basePath}/exports`, label: "Exports" },
+    { href: `${basePath}/diagnostics` as Route, label: "Diagnostics" },
+    { href: `${basePath}/scenarios` as Route, label: "Scenarios" },
+    { href: `${basePath}/imports/actuals` as Route, label: "Imports" },
+    { href: `${basePath}/exports` as Route, label: "Exports" },
   ] as const;
 }
