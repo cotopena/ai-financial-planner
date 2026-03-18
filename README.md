@@ -41,7 +41,7 @@ npm run build
 This scaffold expects these services to be configured before the app is fully usable:
 
 - Convex deployment URL
-- Clerk publishable key and JWT issuer
+- Clerk publishable key, secret key, and Frontend API URL
 - Stripe publishable and secret keys
 - OpenAI API key for later AI flows
 

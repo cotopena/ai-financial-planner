@@ -23,7 +23,7 @@ export function AuthPlaceholder({
         <CardTitle>{title}</CardTitle>
         <CardDescription>
           Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and
-          `CLERK_JWT_ISSUER_DOMAIN` to render the live Clerk flow here.
+          `CLERK_FRONTEND_API_URL` to render the live Clerk flow here.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 text-sm text-muted-foreground">

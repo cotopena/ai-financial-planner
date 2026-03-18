@@ -29,6 +29,7 @@ export function SiteHeader() {
           </Link>
           <Link
             href="/app"
+            prefetch={false}
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
             Workspace

@@ -29,7 +29,9 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link href="/app">Open workspace scaffold</Link>
+                <Link href="/app" prefetch={false}>
+                  Open workspace scaffold
+                </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link href="/pricing">See plans</Link>

@@ -1,3 +1,7 @@
+const clerkFrontendApiUrl =
+  process.env.CLERK_FRONTEND_API_URL ??
+  process.env.CLERK_JWT_ISSUER_DOMAIN;
+
 const env = {
   NEXT_PUBLIC_APP_URL:
     process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
@@ -5,7 +9,8 @@ const env = {
   CONVEX_DEPLOYMENT: process.env.CONVEX_DEPLOYMENT,
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
     process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-  CLERK_JWT_ISSUER_DOMAIN: process.env.CLERK_JWT_ISSUER_DOMAIN,
+  CLERK_FRONTEND_API_URL: clerkFrontendApiUrl,
+  CLERK_JWT_ISSUER_DOMAIN: clerkFrontendApiUrl,
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
@@ -15,7 +20,7 @@ const env = {
 
 export const featureFlags = {
   clerkConfigured: Boolean(
-    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && env.CLERK_JWT_ISSUER_DOMAIN,
+    env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && env.CLERK_FRONTEND_API_URL,
   ),
   convexConfigured: Boolean(
     env.NEXT_PUBLIC_CONVEX_URL && env.CONVEX_DEPLOYMENT,
@@ -41,7 +46,8 @@ export const integrationStatus = [
     configured: featureFlags.clerkConfigured,
     envVars: [
       "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
-      "CLERK_JWT_ISSUER_DOMAIN",
+      "CLERK_SECRET_KEY",
+      "CLERK_FRONTEND_API_URL",
     ],
   },
   {
