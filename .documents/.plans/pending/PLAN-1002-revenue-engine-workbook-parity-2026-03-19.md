@@ -60,11 +60,11 @@ Create the revenue-specific engine contract and persisted-input adapter needed t
 
 ### Acceptance Criteria
 #### Automated
-- [ ] `npm run convex:codegen`
-- [ ] `npm run lint`
-- [ ] `npm run typecheck`
-- [ ] `npm run build`
-- [ ] Revenue output schema parses a representative calculated payload with line detail and applied override attribution.
+- [x] `npm run convex:codegen`
+- [x] `npm run lint`
+- [x] `npm run typecheck`
+- [x] `npm run build`
+- [x] Revenue output schema parses a representative calculated payload with line detail and applied override attribution.
 
 #### Manual
 - [ ] Inspect one calculated scenario response and confirm `sections.revenue.monthly` still behaves as a total-sales series while revenue-specific detail fields carry the line/month metric breakdown.
@@ -86,11 +86,11 @@ Implement workbook-aligned revenue calculations for all 36 months and lock the b
 
 ### Acceptance Criteria
 #### Automated
-- [ ] `npm run parity:revenue`
-- [ ] `npm run convex:codegen`
-- [ ] `npm run lint`
-- [ ] `npm run typecheck`
-- [ ] `npm run build`
+- [x] `npm run parity:revenue`
+- [x] `npm run convex:codegen`
+- [x] `npm run lint`
+- [x] `npm run typecheck`
+- [x] `npm run build`
 
 #### Manual
 - [ ] Compare at least one controlled workbook case against the new fixture output for monthly revenue, COGS, and gross margin totals across Year 1 and the first month of Year 2.
@@ -113,11 +113,11 @@ Make the persisted revenue surfaces capable of producing real deterministic reve
 
 ### Acceptance Criteria
 #### Automated
-- [ ] `npm run parity:revenue`
-- [ ] `npm run convex:codegen`
-- [ ] `npm run lint`
-- [ ] `npm run typecheck`
-- [ ] `npm run build`
+- [x] `npm run parity:revenue`
+- [x] `npm run convex:codegen`
+- [x] `npm run lint`
+- [x] `npm run typecheck`
+- [x] `npm run build`
 
 #### Manual
 - [ ] Trigger the revenue calculation path from persisted scenario data and confirm the action response no longer behaves like a revenue stub for revenue-only scenarios.
@@ -138,6 +138,18 @@ Make the persisted revenue surfaces capable of producing real deterministic reve
 - Security: preserve existing `requireOwnedScenario` guardrails when loading scenario data for recalc; no auth, billing, or AI behavior changes are part of this work.
 - Migration: no destructive Convex schema change is required. Any traceability-key addition in the engine input contract must remain optional and backward-compatible.
 - Rollback: revert revenue module, output schema, parity runner, and recalc-adapter changes together; no snapshot-table rollback should be necessary if this plan is followed.
+
+## Implementation Notes
+- Automated implementation completed on 2026-03-19 against this plan while the file remained under `.documents/.plans/pending/`.
+- `convex/assumptions.ts` write-path stubs were intentionally left unchanged to preserve the ticket boundary around engine math, parity coverage, and persisted recalc reads.
+- Manual verification remains pending for a separate `workflow/commands/manual_verification.md` session.
+
+## Completed Automated Verifications
+- [x] `npm run parity:revenue`
+- [x] `npm run convex:codegen`
+- [x] `npm run lint`
+- [x] `npm run typecheck`
+- [x] `npm run build`
 
 ## References
 - `.documents/issues/current/AIF-7-revenue-engine-roll-forward-2026-03-19.md`
