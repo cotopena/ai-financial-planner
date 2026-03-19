@@ -1,36 +1,11 @@
 import { v } from "convex/values";
-import { mutation, query, type MutationCtx } from "./_generated/server";
-import type { Id } from "./_generated/dataModel";
+import { mutation, query } from "./_generated/server";
 import {
   ensureCurrentUser,
   requireOwnedBusiness,
   requireOwnedScenario,
 } from "./lib/auth";
-
-async function appendScenarioVersion(
-  ctx: MutationCtx,
-  {
-    scenarioId,
-    versionNumber,
-    createdByUserId,
-    changeSource,
-    summary,
-  }: {
-    scenarioId: Id<"scenarios">;
-    versionNumber: number;
-    createdByUserId: Id<"users">;
-    changeSource: "manual" | "system";
-    summary: string;
-  },
-) {
-  await ctx.db.insert("scenario_versions", {
-    scenarioId,
-    versionNumber,
-    changeSource,
-    createdByUserId,
-    summary,
-  });
-}
+import { appendScenarioVersion, sortScenarios } from "./lib/scenario_records";
 
 export const listByBusiness = query({
   args: {
@@ -39,10 +14,33 @@ export const listByBusiness = query({
   handler: async (ctx, args) => {
     await requireOwnedBusiness(ctx, args.businessId);
 
-    return ctx.db
-      .query("scenarios")
-      .withIndex("by_business", (q) => q.eq("businessId", args.businessId))
-      .collect();
+    return sortScenarios(
+      await ctx.db
+        .query("scenarios")
+        .withIndex("by_business", (q) => q.eq("businessId", args.businessId))
+        .collect(),
+    );
+  },
+});
+
+export const get = query({
+  args: {
+    scenarioId: v.id("scenarios"),
+  },
+  handler: async (ctx, args) => {
+    const { business, scenario } = await requireOwnedScenario(ctx, args.scenarioId);
+    const siblingScenarios = sortScenarios(
+      await ctx.db
+        .query("scenarios")
+        .withIndex("by_business", (q) => q.eq("businessId", business._id))
+        .collect(),
+    );
+
+    return {
+      business,
+      scenario,
+      siblingScenarios,
+    };
   },
 });
 
@@ -67,11 +65,7 @@ export const create = mutation({
       await Promise.all(
         existing
           .filter((scenario) => scenario.isBase)
-          .map((scenario) =>
-            ctx.db.patch(scenario._id, {
-              isBase: false,
-            }),
-          ),
+          .map((scenario) => ctx.db.patch(scenario._id, { isBase: false })),
       );
     }
 

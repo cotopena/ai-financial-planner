@@ -1,0 +1,80 @@
+{
+  "workspaceRoot": "./",
+  "documents": {
+    "root": ".documents",
+    "issues": ".documents/issues",
+    "tickets": ".documents/.tickets",
+    "plans": ".documents/.plans",
+    "prs": ".documents/prs",
+    "research": ".documents/research",
+    "thoughts": ".documents/thoughts",
+    "changelog": ".documents/CHANGELOG.md",
+    "taskBoard": "task-board.md",
+    "projectPlan": "plan.md",
+    "businessModel": ".documents/business-model.md",
+    "techStack": "techstack-decisions.md",
+    "productPrd": "MVP PRD \u2014 AI Financial Planner (v1).md",
+    "implementationPrd": "Implementation PRD - AI Financial Planner (v1).md",
+    "progress": "docs/progress.md"
+  },
+  "code": {
+    "app": "src/app",
+    "components": "src/components",
+    "lib": "src/lib",
+    "engine": "src/engine",
+    "docs": "docs",
+    "convex": "convex",
+    "public": "public",
+    "config": [
+      "next.config.ts",
+      "proxy.ts",
+      "tsconfig.json",
+      "package.json",
+      "eslint.config.mjs",
+      "postcss.config.mjs",
+      "components.json"
+    ]
+  },
+  "commands": {
+    "issuesCurrent": ".documents/issues/current",
+    "issuesDone": ".documents/issues/done",
+    "ticketsNew": ".documents/.tickets/new",
+    "ticketsCurrent": ".documents/.tickets/current",
+    "ticketsDone": ".documents/.tickets/done",
+    "plansPending": ".documents/.plans/pending",
+    "plansCurrent": ".documents/.plans/current_plan",
+    "plansCompleted": ".documents/.plans/completed_plan",
+    "prs": ".documents/prs",
+    "researchNotes": ".documents/research",
+    "thoughts": ".documents/thoughts"
+  },
+  "tools": {
+    "search": {
+      "cli": ["rg", "grep"],
+      "ide": ["builtin:Search", "builtin:CodeSearch"]
+    },
+    "glob": {
+      "cli": ["rg --files", "find"],
+      "ide": ["builtin:ListFiles"]
+    },
+    "list": {
+      "cli": ["ls"],
+      "ide": ["builtin:List"]
+    },
+    "read": {
+      "cli": ["sed -n", "cat"],
+      "ide": ["builtin:Read"]
+    },
+    "web": {
+      "cli": ["builtin:WebFetch"],
+      "ide": ["builtin:WebSearch"]
+    }
+  },
+  "notes": [
+    "Prefer ripgrep (rg) when available for speed.",
+    "Mirror external issues locally before research or planning.",
+    "Treat .documents/research as the primary evidence store for plan generation.",
+    "Use docs/progress.md and the PRDs to ground project context when task-board or plan entries are sparse.",
+    "Paths are repository-relative; avoid absolute file system paths in prompts."
+  ]
+}

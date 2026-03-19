@@ -1,6 +1,9 @@
+"use client";
+
 import type { ReactNode } from "react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useQuery } from "convex/react";
 import { AuthMenu } from "@/components/auth/auth-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,8 +15,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { usageSnapshot } from "@/lib/mock-data";
 import { buildScenarioNav } from "@/lib/route-data";
+import { formatStageLabel } from "@/lib/business-options";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
+
+function formatSubscriptionBadge(remaining: number | undefined) {
+  if (remaining === undefined) {
+    return "Usage mock";
+  }
+
+  return `${remaining} left`;
+}
 
 export function WorkspaceShell({
   businessId,
@@ -25,6 +38,18 @@ export function WorkspaceShell({
   children: ReactNode;
 }) {
   const nav = buildScenarioNav({ businessId, scenarioId });
+  const scenarioData = useQuery(api.scenarios.get, {
+    scenarioId: scenarioId as Id<"scenarios">,
+  });
+  const subscription = useQuery(api.billing.getCurrentSubscription);
+
+  const businessLabel =
+    scenarioData?.business.name ?? `Business ${businessId.slice(-6)}`;
+  const scenarioLabel =
+    scenarioData?.scenario.name ?? `Scenario ${scenarioId.slice(-6)}`;
+  const stageLabel = scenarioData
+    ? formatStageLabel(scenarioData.business.businessStage)
+    : "Loading";
 
   return (
     <div className="app-shell-gradient min-h-screen">
@@ -35,29 +60,41 @@ export function WorkspaceShell({
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 Business
               </p>
-              <p className="font-medium">Business {businessId.slice(0, 6)}</p>
+              <p className="font-medium">{businessLabel}</p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 Scenario
               </p>
-              <p className="font-medium">Scenario {scenarioId.slice(0, 6)}</p>
+              <p className="font-medium">{scenarioLabel}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Workspace status
+              </p>
+              <p className="font-medium">
+                {scenarioData?.scenario.status ?? "Loading..."}
+              </p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 Last calc
               </p>
-              <p className="font-medium">Shared engine scaffold wired</p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                Export
-              </p>
-              <p className="font-medium">PDF / CSV placeholders</p>
+              <p className="font-medium">Snapshot pipeline pending</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            <Button asChild size="sm" variant="ghost">
+              <Link href={`/app/businesses/${businessId}/settings`}>
+                Business settings
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href={`/app/businesses/${businessId}/scenarios`}>
+                All scenarios
+              </Link>
+            </Button>
             <Button asChild size="sm" variant="outline">
               <Link
                 href={`/app/businesses/${businessId}/scenarios/${scenarioId}/exports`}
@@ -76,8 +113,8 @@ export function WorkspaceShell({
             <CardHeader>
               <CardTitle>Workspace map</CardTitle>
               <CardDescription>
-                Mirrors the PRD route structure for the authenticated scenario
-                workspace.
+                PRD route structure with real business and scenario metadata in
+                the shell.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-1">
@@ -95,12 +132,17 @@ export function WorkspaceShell({
 
           <Card>
             <CardHeader>
-              <CardTitle>Wizard</CardTitle>
+              <CardTitle>Business context</CardTitle>
               <CardDescription>
-                Nine-step AI onboarding flow scaffolded for Sprint 6.
+                Business shell is live. Assumption-entry screens remain later
+                sprint work.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
+                <p className="font-medium text-foreground">{businessLabel}</p>
+                <p className="mt-1">{stageLabel}</p>
+              </div>
               <Button asChild className="w-full" variant="secondary">
                 <Link
                   href={`/app/businesses/${businessId}/scenarios/${scenarioId}/wizard/step-1`}
@@ -125,7 +167,7 @@ export function WorkspaceShell({
                   </CardDescription>
                 </div>
                 <Badge variant="outline">
-                  {usageSnapshot.actionsRemaining} left
+                  {formatSubscriptionBadge(subscription?.aiActionsRemaining)}
                 </Badge>
               </div>
             </CardHeader>
@@ -133,8 +175,8 @@ export function WorkspaceShell({
               <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
                 <p className="font-medium">What ships in Sprint 0</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Structured routes, Convex surface stubs, and approval flow
-                  integration points.
+                  Authenticated business and scenario CRUD now runs end to end
+                  through Convex, while AI approvals remain a later sprint.
                 </p>
               </div>
               <div className="space-y-3 text-sm text-muted-foreground">

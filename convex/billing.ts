@@ -1,7 +1,43 @@
 import { v } from "convex/values";
-import { action, httpAction } from "./_generated/server";
+import { action, httpAction, query } from "./_generated/server";
+import { getCurrentUser } from "./lib/auth";
 
 const planKey = v.union(v.literal("builder"), v.literal("pro"));
+
+export const getCurrentSubscription = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+
+    if (!user) {
+      return null;
+    }
+
+    const subscriptions = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+    const subscription =
+      subscriptions.sort((left, right) => right._creationTime - left._creationTime)[0] ??
+      null;
+
+    if (!subscription) {
+      return null;
+    }
+
+    return {
+      planKey: subscription.planKey,
+      status: subscription.status,
+      aiActionsUsed: subscription.aiActionsUsed,
+      aiActionLimit: subscription.aiActionLimit,
+      aiActionsRemaining: Math.max(
+        subscription.aiActionLimit - subscription.aiActionsUsed,
+        0,
+      ),
+      currentPeriodEnd: subscription.currentPeriodEnd,
+    };
+  },
+});
 
 export const createCheckoutSession = action({
   args: {
