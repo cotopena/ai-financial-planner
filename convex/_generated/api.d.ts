@@ -17,6 +17,7 @@ import type * as exports from "../exports.js";
 import type * as http from "../http.js";
 import type * as imports from "../imports.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as lib_scenario_calculation_input from "../lib/scenario_calculation_input.js";
 import type * as lib_scenario_records from "../lib/scenario_records.js";
 import type * as scenarios from "../scenarios.js";
 import type * as snapshots from "../snapshots.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   imports: typeof imports;
   "lib/auth": typeof lib_auth;
+  "lib/scenario_calculation_input": typeof lib_scenario_calculation_input;
   "lib/scenario_records": typeof lib_scenario_records;
   scenarios: typeof scenarios;
   snapshots: typeof snapshots;

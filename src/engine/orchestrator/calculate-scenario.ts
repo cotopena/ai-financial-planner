@@ -31,6 +31,9 @@ export function calculateScenario(
     startYear: input.business.startYear,
   });
   const baseline = createEmptyScenarioOutput();
+  const revenue = calculateRevenue(input, axis);
+  const year1Revenue = revenue.totals.sales.annual[0]?.value ?? 0;
+  const year1Margin = revenue.totals.margin.annual[0]?.value ?? 0;
 
   return ScenarioOutputSchema.parse({
     ...baseline,
@@ -41,7 +44,7 @@ export function calculateScenario(
       debtSchedules: calculateDebtSchedules(input, axis),
       depreciation: calculateDepreciation(input, axis),
       amortization: calculateAmortization(input, axis),
-      revenue: calculateRevenue(input, axis),
+      revenue,
       payroll: calculatePayroll(input, axis),
       operatingExpenses: calculateOperatingExpenses(input, axis),
       workingCapital: calculateWorkingCapital(input, axis),
@@ -54,8 +57,8 @@ export function calculateScenario(
     },
     diagnostics: calculateDiagnostics(input),
     summary: {
-      revenue: 0,
-      grossMarginPct: 0,
+      revenue: year1Revenue,
+      grossMarginPct: year1Revenue === 0 ? 0 : (year1Margin / year1Revenue) * 100,
       netIncome: 0,
       endingCash: input.openingBalances.cash,
       maxLoc: 0,
