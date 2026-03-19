@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { BusinessRootRedirect } from "@/components/businesses/business-root-redirect";
 
 export default async function BusinessRootPage({
   params,
@@ -6,5 +6,6 @@ export default async function BusinessRootPage({
   params: Promise<{ businessId: string }>;
 }) {
   const { businessId } = await params;
-  redirect(`/app/businesses/${businessId}/scenarios`);
+
+  return <BusinessRootRedirect businessId={businessId} />;
 }

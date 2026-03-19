@@ -1,3 +1,6 @@
+"use client";
+
+import { useQuery } from "convex/react";
 import { PageIntro } from "@/components/workspace/page-intro";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,9 +11,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { pricingPlans, usageSnapshot } from "@/lib/mock-data";
+import { api } from "../../../../../convex/_generated/api";
+import { pricingPlans } from "@/lib/mock-data";
+
+function formatPlanName(planKey: string | undefined) {
+  if (!planKey) {
+    return "Builder";
+  }
+
+  return `${planKey.charAt(0).toUpperCase()}${planKey.slice(1)}`;
+}
 
 export default function BillingPage() {
+  const subscription = useQuery(api.billing.getCurrentSubscription);
+
   return (
     <div className="space-y-6">
       <PageIntro
@@ -28,15 +42,20 @@ export default function BillingPage() {
                 This same meter also appears in the workspace footer and AI panel header.
               </CardDescription>
             </div>
-            <Badge variant="outline">{usageSnapshot.planName}</Badge>
+            <Badge variant="outline">{formatPlanName(subscription?.planKey)}</Badge>
           </div>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-4">
           {[
-            ["Used", String(usageSnapshot.actionsUsed)],
-            ["Remaining", String(usageSnapshot.actionsRemaining)],
-            ["Reset", usageSnapshot.resetDate],
-            ["State", "Subscription mock"],
+            ["Used", String(subscription?.aiActionsUsed ?? 0)],
+            ["Remaining", String(subscription?.aiActionsRemaining ?? 0)],
+            [
+              "Reset",
+              subscription?.currentPeriodEnd
+                ? new Date(subscription.currentPeriodEnd).toLocaleDateString()
+                : "Pending",
+            ],
+            ["State", subscription?.status ?? "Subscription mock"],
           ].map(([label, value]) => (
             <div
               key={label}

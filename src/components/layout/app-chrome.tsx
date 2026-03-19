@@ -1,13 +1,26 @@
+"use client";
+
 import type { ReactNode } from "react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useQuery } from "convex/react";
 import { AuthMenu } from "@/components/auth/auth-menu";
 import { ConfigurationStatus } from "@/components/layout/configuration-status";
 import { Badge } from "@/components/ui/badge";
 import { appNavItems } from "@/lib/route-data";
-import { usageSnapshot } from "@/lib/mock-data";
+import { api } from "../../../convex/_generated/api";
+
+function formatSubscriptionLabel(planKey: string | undefined, status: string | undefined) {
+  if (!planKey || !status) {
+    return "Billing mock";
+  }
+
+  return `${planKey.charAt(0).toUpperCase()}${planKey.slice(1)} • ${status}`;
+}
 
 export function AppChrome({ children }: { children: ReactNode }) {
+  const subscription = useQuery(api.billing.getCurrentSubscription);
+
   return (
     <div className="app-shell-gradient min-h-screen">
       <header className="border-b border-border/60 bg-background/75 backdrop-blur">
@@ -19,7 +32,9 @@ export function AppChrome({ children }: { children: ReactNode }) {
             <h1 className="text-xl font-semibold">AI Financial Planner</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="outline">{usageSnapshot.planName} plan</Badge>
+            <Badge variant="outline">
+              {formatSubscriptionLabel(subscription?.planKey, subscription?.status)}
+            </Badge>
             <AuthMenu />
           </div>
         </div>
