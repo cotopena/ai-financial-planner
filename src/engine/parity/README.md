@@ -2,11 +2,11 @@
 
 This folder is reserved for workbook-derived parity fixtures.
 
-Planned fixture set from the implementation PRD:
+Implemented revenue fixture set for `npm run parity:revenue`:
 
-- startup business with no debt
-- startup business with multiple debt sources
-- ongoing business with opening balances
-- low-margin business with warnings
-- cash shortfall case with auto LOC
-- shortfall case with no financing
+- `revenue-startup-no-debt` - Year 1 monthly compounding with aggregate sales compatibility
+- `revenue-ongoing-opening-balances` - Year 2 and Year 3 roll-forward from the prior-year ending month
+- `revenue-sales-override-precedence` - metric-level override precedence and traceability
+- `revenue-low-margin-windowed` - inactive month gating with a low-margin line
+
+Future parity backlog from the implementation PRD still includes broader cash, debt, and statement scenarios once those engine modules are implemented.

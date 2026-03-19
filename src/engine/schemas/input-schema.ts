@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+export const RevenueMetricSchema = z.enum(["units", "sales", "cogs", "margin"]);
+export const RevenueOverrideSourceSchema = z.enum(["manual", "ai_approved"]);
+
 export const BusinessMetadataSchema = z.object({
   name: z.string(),
   companyName: z.string(),
@@ -51,6 +54,7 @@ export const OpeningBalanceSchema = z.object({
 });
 
 export const RevenueLineSchema = z.object({
+  lineKey: z.string().optional(),
   sortOrder: z.number().int(),
   name: z.string(),
   unitLabel: z.string(),
@@ -69,11 +73,13 @@ export const RevenueLineSchema = z.object({
 });
 
 export const RevenueOverrideSchema = z.object({
+  lineKey: z.string().optional(),
+  overrideKey: z.string().optional(),
   monthIndex: z.number().int().min(1).max(36),
-  metric: z.string(),
+  metric: RevenueMetricSchema,
   overrideValue: z.number(),
   reason: z.string(),
-  source: z.string(),
+  source: RevenueOverrideSourceSchema,
   isActive: z.boolean(),
 });
 
@@ -202,6 +208,10 @@ export const NormalizedScenarioInputSchema = z.object({
 });
 
 export type NormalizedScenarioInput = z.infer<typeof NormalizedScenarioInputSchema>;
+export type RevenueMetric = z.infer<typeof RevenueMetricSchema>;
+export type RevenueOverrideSource = z.infer<typeof RevenueOverrideSourceSchema>;
+export type RevenueLine = z.infer<typeof RevenueLineSchema>;
+export type RevenueOverride = z.infer<typeof RevenueOverrideSchema>;
 
 export function createEmptyScenarioInput(): NormalizedScenarioInput {
   return {
