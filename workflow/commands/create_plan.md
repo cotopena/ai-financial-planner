@@ -32,7 +32,7 @@ Then wait for input.
    - Current ticket in `.documents/.tickets/current/`
    - Mirrored issue from `.documents/issues/.latest` when available
    - Research note from `.documents/research/.latest` or user-provided path
-   - Supporting docs: `task-board.md`, `plan.md`, `.documents/business-model.md`, `techstack-decisions.md`, `docs/progress.md`, and any cited PRDs or code files
+   - Supporting docs: `docs/MVP PRD — AI Financial Planner (v1).md`, `docs/Implementation PRD - AI Financial Planner (v1).md`, `docs/progress.md`, `.documents/business-model.md`, and any cited `docs/` or code files
 2. Extract ticket controls:
    - `risk_level`
    - `plan_blockers`

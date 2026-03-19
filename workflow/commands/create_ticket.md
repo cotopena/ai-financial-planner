@@ -26,12 +26,12 @@ You generate concise, engineer-ready tickets for the AI Financial Planner repo (
 1. The user request in this conversation.
 2. `.documents/issues/.latest` if it exists.
 3. `.documents/research/.latest` if it exists.
-4. `task-board.md` for the next priority items.
-5. `plan.md` for project scope alignment.
-6. `.documents/business-model.md` for product constraints.
-7. `techstack-decisions.md` for stack constraints.
-8. `docs/progress.md` for current implementation status.
-9. Any files the user explicitly mentions.
+4. `docs/MVP PRD — AI Financial Planner (v1).md` for product scope and constraints.
+5. `docs/Implementation PRD - AI Financial Planner (v1).md` for implementation expectations.
+6. `docs/progress.md` for current implementation status.
+7. `.documents/business-model.md` for product constraints when it is relevant.
+8. Any other `docs/*.md` files the user explicitly mentions.
+9. Any other repo files the user explicitly mentions.
 
 If `.documents/business-model.md` is missing, proceed without it. If `.documents/issues/.latest` or `.documents/research/.latest` is missing, proceed with available context but note the missing artifact in `Assumptions` or `plan_blockers`.
 

@@ -11,6 +11,7 @@ This folder standardizes how Codex runs commands and how agents use tools in thi
 ## Paths
 - Workspace root: `./`
 - Documents root: `.documents/`
+- Supporting docs root: `docs/`
 - Local issue mirror: `.documents/issues/`
 - Execution tickets: `.documents/.tickets/`
 - Plans: `.documents/.plans/`
@@ -18,12 +19,9 @@ This folder standardizes how Codex runs commands and how agents use tools in thi
 - Historical notes and debug artifacts: `.documents/thoughts/`
 - PR descriptions: `.documents/prs/`
 - Changelog: `.documents/CHANGELOG.md`
-- Task board: `task-board.md`
-- Project plan: `plan.md`
 - Business model: `.documents/business-model.md`
-- Tech stack decisions: `techstack-decisions.md`
-- Product PRD: `MVP PRD — AI Financial Planner (v1).md`
-- Implementation PRD: `Implementation PRD - AI Financial Planner (v1).md`
+- Product PRD: `docs/MVP PRD — AI Financial Planner (v1).md`
+- Implementation PRD: `docs/Implementation PRD - AI Financial Planner (v1).md`
 - Progress tracker: `docs/progress.md`
 - App routes: `src/app/`
 - Components: `src/components/`
@@ -60,6 +58,7 @@ Optional: use `workflow/commands/make_branch.md` before implementation or `workf
 - Use repository-relative paths in prompts.
 - Keep local issue mirrors faithful to the source issue; do not silently rewrite requirements during intake.
 - Keep research evidence under `.documents/research/` and treat it as a prerequisite for planning.
+- Treat `docs/` as the default source of project context; do not assume a task board or separate project-plan doc exists.
 - Keep tickets focused and name them `TICKET-####-short-slug-YYYY-MM-DD.md`.
 - Prefer small, iterative plans with explicit acceptance criteria and real verification commands.
 - For this repo, the most common verification set is `npm run convex:codegen`, `npm run lint`, `npm run typecheck`, and `npm run build`.

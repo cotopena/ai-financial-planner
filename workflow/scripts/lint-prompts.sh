@@ -58,4 +58,24 @@ require_count '"Tools & Defaults" sections in agents' "Tools & Defaults" "workfl
 require_count 'Agent briefs referencing tooling.config.json' "tooling.config.json" "workflow/agents" 6
 require_count 'Agent briefs referencing README' "workflow/README.md" "workflow/agents" 6
 
+deprecated_targets=(
+  "workflow/README.md"
+  "workflow/tooling.config.json"
+  "workflow/commands"
+)
+
+deprecated_refs=(
+  '`task-board.md`'
+  '`plan.md`'
+  '"taskBoard"'
+  '"projectPlan"'
+)
+
+for ref in "${deprecated_refs[@]}"; do
+  if rg -n -F "$ref" "${deprecated_targets[@]}" >/dev/null 2>&1; then
+    fail "Workflow still references deprecated task board or plan docs: $ref"
+  fi
+done
+pass "No deprecated task board or plan doc references remain"
+
 pass "Prompt lint checks complete"

@@ -2,6 +2,7 @@
   "workspaceRoot": "./",
   "documents": {
     "root": ".documents",
+    "supportingDocsRoot": "docs",
     "issues": ".documents/issues",
     "tickets": ".documents/.tickets",
     "plans": ".documents/.plans",
@@ -9,12 +10,9 @@
     "research": ".documents/research",
     "thoughts": ".documents/thoughts",
     "changelog": ".documents/CHANGELOG.md",
-    "taskBoard": "task-board.md",
-    "projectPlan": "plan.md",
     "businessModel": ".documents/business-model.md",
-    "techStack": "techstack-decisions.md",
-    "productPrd": "MVP PRD \u2014 AI Financial Planner (v1).md",
-    "implementationPrd": "Implementation PRD - AI Financial Planner (v1).md",
+    "productPrd": "docs/MVP PRD \u2014 AI Financial Planner (v1).md",
+    "implementationPrd": "docs/Implementation PRD - AI Financial Planner (v1).md",
     "progress": "docs/progress.md"
   },
   "code": {
@@ -74,7 +72,8 @@
     "Prefer ripgrep (rg) when available for speed.",
     "Mirror external issues locally before research or planning.",
     "Treat .documents/research as the primary evidence store for plan generation.",
-    "Use docs/progress.md and the PRDs to ground project context when task-board or plan entries are sparse.",
+    "Treat docs/ as the primary support-docs root for workflow context.",
+    "Use docs/progress.md and the PRDs to ground project context instead of relying on a task board or separate plan doc.",
     "Paths are repository-relative; avoid absolute file system paths in prompts."
   ]
 }
