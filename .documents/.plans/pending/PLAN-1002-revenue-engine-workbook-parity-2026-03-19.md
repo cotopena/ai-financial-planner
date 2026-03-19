@@ -67,7 +67,7 @@ Create the revenue-specific engine contract and persisted-input adapter needed t
 - [x] Revenue output schema parses a representative calculated payload with line detail and applied override attribution.
 
 #### Manual
-- [ ] Inspect one calculated scenario response and confirm `sections.revenue.monthly` still behaves as a total-sales series while revenue-specific detail fields carry the line/month metric breakdown.
+- [x] Inspect one calculated scenario response and confirm `sections.revenue.monthly` still behaves as a total-sales series while revenue-specific detail fields carry the line/month metric breakdown. -- Passed: revenue-startup-no-debt returned 36 total-sales monthly values; `sections.revenue.monthly` matched `totals.sales.monthly`; line detail exposed units, sales, cogs, and margin for Jan 2026.
 
 ### Assets / Docs
 - `docs/Implementation PRD - AI Financial Planner (v1).md:647-670`
@@ -93,8 +93,8 @@ Implement workbook-aligned revenue calculations for all 36 months and lock the b
 - [x] `npm run build`
 
 #### Manual
-- [ ] Compare at least one controlled workbook case against the new fixture output for monthly revenue, COGS, and gross margin totals across Year 1 and the first month of Year 2.
-- [ ] Confirm fixture failure messages identify the drifting line, month, and metric rather than only reporting a section-level mismatch.
+- [x] Compare at least one controlled workbook case against the new fixture output for monthly revenue, COGS, and gross margin totals across Year 1 and the first month of Year 2. -- Passed: temp workbook copy matched revenue-ongoing-opening-balances for Year 1 totals and first Year 2 month (14400 revenue, 3600 COGS, 10800 margin; month 13 1200/300/900).
+- [x] Confirm fixture failure messages identify the drifting line, month, and metric rather than only reporting a section-level mismatch. -- Passed: parity drift messages identify fixture, line/total scope, month/year, and metric instead of only a section-level mismatch.
 
 ### Assets / Docs
 - `docs/MVP PRD — AI Financial Planner (v1).md:1705-1749`
@@ -120,8 +120,8 @@ Make the persisted revenue surfaces capable of producing real deterministic reve
 - [x] `npm run build`
 
 #### Manual
-- [ ] Trigger the revenue calculation path from persisted scenario data and confirm the action response no longer behaves like a revenue stub for revenue-only scenarios.
-- [ ] Verify the scope boundary is preserved: overview/snapshot UI remains unchanged, but the recalc path returns real revenue summary values.
+- [x] Trigger the revenue calculation path from persisted scenario data and confirm the action response no longer behaves like a revenue stub for revenue-only scenarios. -- Passed: seeded scenario `ns78z8qas7rym44cx9v1t5r9ds837sdb` returned `status: "calculated"` from `engine.recalculateScenario` with `summary.revenue = 14400`, `summary.grossMarginPct = 75`, and a populated `revenueSection`.
+- [x] Verify the scope boundary is preserved: overview/snapshot UI remains unchanged, but the recalc path returns real revenue summary values. -- Passed: the action returned live revenue summary data and detailed `revenueSection`, while the response note still states snapshot persistence is pending.
 
 ### Assets / Docs
 - `docs/progress.md:24-27`
@@ -142,7 +142,7 @@ Make the persisted revenue surfaces capable of producing real deterministic reve
 ## Implementation Notes
 - Automated implementation completed on 2026-03-19 against this plan while the file remained under `.documents/.plans/pending/`.
 - `convex/assumptions.ts` write-path stubs were intentionally left unchanged to preserve the ticket boundary around engine math, parity coverage, and persisted recalc reads.
-- Manual verification remains pending for a separate `workflow/commands/manual_verification.md` session.
+- Manual verification ran on 2026-03-19 in this worktree: Phase 1 and Phase 2 passed from the original report, and the Phase 3 persisted recalc check was later unblocked with a seeded Convex scenario under identity `seed-manual-verification-revenue`.
 
 ## Completed Automated Verifications
 - [x] `npm run parity:revenue`
