@@ -1,107 +1,84 @@
 # AI Financial Planner
 
-AI Financial Planner is an open-source product and portfolio project for building a small-business financial planning app around a deterministic 3-year modeling engine.
+AI Financial Planner is a web application for small business owners to build, understand, and compare 3-year financial plans without managing a complex spreadsheet manually.
 
-The core idea is simple: most small business owners need real planning answers, not a fragile spreadsheet. This project rebuilds a workbook-style financial model as a TypeScript engine, then wraps it in a web app with scenario management, guided onboarding, and explainable outputs.
+The product combines a deterministic finance engine with a guided app experience for assumptions, scenarios, statements, and diagnostics. This repository is also a portfolio project showing how a workbook-driven planning process can be rebuilt as a modern full-stack product.
 
-## What the product is supposed to do
+| Item | Detail |
+| --- | --- |
+| Audience | Small business owners, founders, and operators |
+| Primary use case | Build and compare 36-month business plans |
+| Product approach | Guided web app with deterministic calculations and AI-assisted workflows |
+| Current state | MVP in active development |
 
-The target product helps a small business owner answer questions like:
+## What the app is for
 
-- Is this business viable?
-- How much cash do I need to start or stabilize it?
-- What happens to cash month by month over 36 months?
-- When do I break even?
+The goal of the product is to help a user answer practical planning questions such as:
+
+- Is this business financially viable?
+- How much capital is needed to start or stabilize it?
+- What happens to cash month by month over the next 36 months?
+- When does the business break even?
 - What changes if revenue grows slower or faster than expected?
-- Can I afford payroll, debt, and operating expenses?
-- If I do not know a number yet, what is a reasonable assumption to start with?
+- Can the business support payroll, debt, and operating expenses?
 
-The long-term product direction in this repo is:
+## Core product capabilities
 
-- An AI-guided onboarding wizard for building a base case
-- Multiple businesses and multiple scenarios per user
-- A deterministic 36-month finance engine
-- Revenue, payroll, expenses, cash flow, statements, ratios, and diagnostics
-- Scenario comparison and versioning
-- PDF and CSV exports
-- AI suggestions that require explicit user approval before changes are applied
+The intended product experience includes:
 
-## Why this project exists
+- Create businesses and manage multiple planning scenarios
+- Capture assumptions for revenue, payroll, expenses, funding, and cash flow
+- Generate income statement, balance sheet, break-even, ratio, and diagnostic outputs
+- Compare scenarios and version changes over time
+- Use an AI-guided wizard to help build a base case
+- Require user approval before AI-generated changes are applied
 
-This codebase is intentionally not "Excel in the browser." The workbook is treated as a parity reference, while the actual product logic is rebuilt as application code that is easier to test, version, and evolve.
-
-That makes this project useful as both:
-
-- A product prototype for an AI-assisted financial planning workflow
-- A portfolio example of how to turn a spreadsheet-driven business process into a full-stack application with a typed engine underneath
-
-## Current status
-
-This project is in active MVP development.
+## Current implementation status
 
 Implemented today:
 
-- Authenticated app shell with Clerk
+- Clerk-authenticated application shell
 - Convex-backed business and scenario CRUD
-- Workspace routing for the major planning sections
+- Workspace routing for the main planning sections
 - Deterministic scenario calculation orchestration
 - Revenue engine logic with workbook-parity fixtures
-- Secret scanning for local and CI workflows
+- Local and CI secret scanning with Gitleaks
 
-In progress:
+Still in progress:
 
 - AI onboarding wizard
-- Editable assumption-entry screens across all model sections
+- End-to-end editable assumption-entry screens
 - Persisted reporting snapshots for overview, statements, and diagnostics
-- AI assistant suggestion flows
+- Contextual AI assistant flows
 - Imports, exports, and billing enforcement
 
-## Product scope
+## Why this approach
 
-The MVP is designed around general small business owners first, with a US-only, English-only initial release. The planning model supports both startup and ongoing businesses and keeps all 36 months visible, while still separating Year 1 detail from Years 2-3 summary views.
+This project is intentionally not Excel in the browser.
 
-Planned model areas:
+The spreadsheet model is treated as a parity reference, while the actual application logic is rebuilt as typed, testable code. That makes the system easier to validate, easier to evolve, and easier to explain than a UI that simply wraps spreadsheet formulas.
 
-- Setup and business profile
-- Opening position and funding
-- Revenue forecasting
-- Payroll forecasting
-- Operating expense forecasting
-- Working capital and financing behavior
-- Cash flow
-- Income statement
-- Balance sheet
-- Break-even analysis
-- Financial ratios
-- Diagnostics and scenario comparison
+## Tech stack
 
-## Architecture
+- Next.js App Router
+- React 19
+- TypeScript
+- Tailwind CSS
+- Convex for backend functions and data
+- Clerk for authentication
+- Stripe for billing
+- OpenAI for planned AI-assisted workflows
 
-The current implementation is built around a deterministic shared engine and a web app shell:
+## Running locally
 
-- Frontend: Next.js App Router, React, TypeScript, Tailwind CSS
-- Backend and data layer: Convex
-- Auth: Clerk
-- Billing: Stripe
-- AI integration target: OpenAI Responses API
-- Modeling approach: workbook-informed parity, but implemented as code
+### Prerequisites
 
-Key architectural rule:
+- Node.js
+- npm
+- A configured Convex project
+- Clerk, Stripe, and OpenAI credentials if you want the full app behavior
 
-- The spreadsheet is the reference, not the runtime.
-
-## Repository highlights
-
-Useful places to start:
-
-- `docs/MVP PRD — AI Financial Planner (v1).md` for the locked product definition
-- `docs/Implementation PRD - AI Financial Planner (v1).md` for the engineering plan and route map
-- `docs/progress.md` for the current implementation status
-- `src/engine/` for the finance engine modules
-- `convex/` for backend functions and schema-backed app logic
-- `src/app/` and `src/components/` for the application UI
-
-## Local setup
+### Setup
 
 ```bash
 npm install
@@ -111,6 +88,12 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+If you are running a local Convex workflow, use:
+
+```bash
+npm run dev:convex
+```
 
 ## Environment variables
 
@@ -123,6 +106,8 @@ The app expects values for:
 
 See `.env.example` for the current variable list.
 
+Without those values, some routes will render placeholder or limited states instead of full product behavior.
+
 ## Verification
 
 ```bash
@@ -134,11 +119,10 @@ npm run parity:revenue
 npm run secrets:scan
 ```
 
-Install `gitleaks` first if you want to run the local secret scan:
+Install `gitleaks` first if needed:
 
 ```bash
 brew install gitleaks
-npm run secrets:scan
 ```
 
 To scan only staged changes before a commit:
@@ -147,12 +131,20 @@ To scan only staged changes before a commit:
 npm run secrets:scan -- --staged
 ```
 
-## Notes for reviewers
+## Project structure
 
-This is currently an MVP-in-progress rather than a finished SaaS product. Some screens are fully wired to real Convex data, while others are still scaffolded to match the target route map and product flow.
+- `src/app/` - Next.js routes
+- `src/components/` - UI components
+- `src/engine/` - deterministic finance engine
+- `convex/` - backend functions and schema-backed app logic
+- `docs/` - product and implementation documentation
 
-The most important technical throughline in the repo is the attempt to keep the financial model deterministic, testable, and explainable even as AI-assisted UX is layered on top.
+## Notes
+
+- The financial model horizon is 36 months.
+- Year 1 is intended to expose more granular detail than Years 2 and 3.
+- The current codebase is an MVP, not a finished production SaaS.
 
 ## Disclaimer
 
-This project is a software prototype for financial planning workflows. It is not financial, legal, tax, or investment advice.
+This software is a financial planning prototype. It is not financial, legal, tax, or investment advice.
