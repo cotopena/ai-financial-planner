@@ -151,4 +151,6 @@ This software is a financial planning prototype. It is not financial, legal, tax
 
 ## License
 
-This project is licensed under the Apache License 2.0. See `LICENSE`.
+This project uses the PolyForm Noncommercial 1.0.0 license. You may use,
+study, and modify the code for noncommercial purposes, but commercial use is
+not permitted without separate permission. See `LICENSE`.
