@@ -148,3 +148,7 @@ npm run secrets:scan -- --staged
 ## Disclaimer
 
 This software is a financial planning prototype. It is not financial, legal, tax, or investment advice.
+
+## License
+
+This project is licensed under the Apache License 2.0. See `LICENSE`.
