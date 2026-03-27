@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a focused improvement to the product or developer experience.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What user or developer problem is not well served today?
+      placeholder: Describe the pain point or missing capability.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What should happen?
+      placeholder: Describe the outcome, not just the implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. What other approaches did you consider?
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope notes
+      description: Optional. Call out dependencies, constraints, or affected areas.

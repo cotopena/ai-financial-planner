@@ -145,6 +145,10 @@ This public repository intentionally excludes private planning artifacts, intern
 
 Keep those in a separate private companion repo so the public history stays focused on source code, public documentation, and contributor-facing automation.
 
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development expectations and [SECURITY.md](./SECURITY.md) for responsible vulnerability reporting.
+
 ## Notes
 
 - The financial model horizon is 36 months.
