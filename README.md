@@ -137,7 +137,13 @@ npm run secrets:scan -- --staged
 - `src/components/` - UI components
 - `src/engine/` - deterministic finance engine
 - `convex/` - backend functions and schema-backed app logic
-- `docs/` - product and implementation documentation
+- `docs/` - public product and implementation notes
+
+## Maintainer scope
+
+This public repository intentionally excludes private planning artifacts, internal workflow prompts, and maintainer-only operating docs.
+
+Keep those in a separate private companion repo so the public history stays focused on source code, public documentation, and contributor-facing automation.
 
 ## Notes
 

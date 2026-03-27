@@ -25,6 +25,18 @@
 *.pem
 .tmp/
 
+# maintainer-only private workspace
+/.documents/
+/workflow/
+/AGENTS.md
+/docs/progress.md
+/docs/repo-workflow.md
+/plan.md
+/task-board.md
+/techstack-decisions.md
+/manual-verification-*.md
+/scripts/codex-project
+
 # debug
 npm-debug.log*
 yarn-debug.log*
