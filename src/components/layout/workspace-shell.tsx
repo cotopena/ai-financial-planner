@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { AuthMenu } from "@/components/auth/auth-menu";
 import { Badge } from "@/components/ui/badge";
@@ -37,11 +38,20 @@ export function WorkspaceShell({
   scenarioId: string;
   children: ReactNode;
 }) {
+  const { isLoaded, isSignedIn } = useAuth();
   const nav = buildScenarioNav({ businessId, scenarioId });
-  const scenarioData = useQuery(api.scenarios.get, {
-    scenarioId: scenarioId as Id<"scenarios">,
-  });
-  const subscription = useQuery(api.billing.getCurrentSubscription);
+  const scenarioData = useQuery(
+    api.scenarios.get,
+    isLoaded && isSignedIn
+      ? {
+          scenarioId: scenarioId as Id<"scenarios">,
+        }
+      : "skip",
+  );
+  const subscription = useQuery(
+    api.billing.getCurrentSubscription,
+    isLoaded && isSignedIn ? {} : "skip",
+  );
 
   const businessLabel =
     scenarioData?.business.name ?? `Business ${businessId.slice(-6)}`;
@@ -73,7 +83,7 @@ export function WorkspaceShell({
                 Workspace status
               </p>
               <p className="font-medium">
-                {scenarioData?.scenario.status ?? "Loading..."}
+                {isLoaded ? scenarioData?.scenario.status ?? "Loading..." : "Loading..."}
               </p>
             </div>
             <div>

@@ -92,30 +92,77 @@ assert.equal(missingOverview.hasSnapshot, false);
 assert.equal(missingOverview.summary, null);
 
 const overview = buildSnapshotOverviewResponse({
-  metaDocs: [rows.meta],
-  summaryDocs: [rows.summary],
+  metaDocs: [
+    { ...rows.meta, generatedAt: rows.meta.generatedAt - 5000, _creationTime: 1 },
+    { ...rows.meta, _creationTime: 2 },
+  ],
+  summaryDocs: [
+    {
+      ...rows.summary,
+      summaryJson: {
+        ...rows.summary.summaryJson,
+        revenue: 1,
+      },
+      _creationTime: 1,
+    },
+    { ...rows.summary, _creationTime: 2 },
+  ],
 });
 assert.equal(overview.hasSnapshot, true);
 assert.equal(overview.summary?.revenue, output.summary.revenue);
 
 const statements = buildSnapshotStatementsResponse({
-  metaDocs: [rows.meta],
-  monthlyDocs: rows.monthly,
-  annualDocs: rows.annual,
-  ratioDocs: [rows.ratios],
+  metaDocs: [{ ...rows.meta, _creationTime: 2 }],
+  monthlyDocs: [
+    ...rows.monthly.map((row) => ({
+      ...row,
+      payloadJson: {
+        ...row.payloadJson,
+        notes: ["stale"],
+      },
+      _creationTime: 1,
+    })),
+    ...rows.monthly.map((row) => ({ ...row, _creationTime: 2 })),
+  ],
+  annualDocs: [
+    ...rows.annual.map((row) => ({
+      ...row,
+      payloadJson: {
+        ...row.payloadJson,
+        notes: ["stale"],
+      },
+      _creationTime: 1,
+    })),
+    ...rows.annual.map((row) => ({ ...row, _creationTime: 2 })),
+  ],
+  ratioDocs: [
+    {
+      ...rows.ratios,
+      ratiosJson: {
+        ...rows.ratios.ratiosJson,
+        notes: ["stale"],
+      },
+      _creationTime: 1,
+    },
+    { ...rows.ratios, _creationTime: 2 },
+  ],
   sectionKey: "income-statement",
 });
 assert.equal(statements.hasSnapshot, true);
 assert.equal(statements.monthlySections.length, 1);
 assert.equal(statements.annualSections.length, 1);
 assert.equal(statements.monthlySections[0]?.sectionKey, "income-statement");
+assert.deepEqual(
+  statements.monthlySections[0]?.notes,
+  rows.monthly.find((row) => row.sectionKey === "income-statement")?.payloadJson.notes,
+);
 assert.equal(statements.ratios, null);
 
 const ratioStatements = buildSnapshotStatementsResponse({
-  metaDocs: [rows.meta],
-  monthlyDocs: rows.monthly,
-  annualDocs: rows.annual,
-  ratioDocs: [rows.ratios],
+  metaDocs: [{ ...rows.meta, _creationTime: 2 }],
+  monthlyDocs: rows.monthly.map((row) => ({ ...row, _creationTime: 2 })),
+  annualDocs: rows.annual.map((row) => ({ ...row, _creationTime: 2 })),
+  ratioDocs: [{ ...rows.ratios, _creationTime: 2 }],
   sectionKey: "ratios",
 });
 assert.equal(ratioStatements.ratios?.sectionKey, "ratios");
@@ -123,8 +170,15 @@ assert.equal(ratioStatements.monthlySections[0]?.sectionKey, "ratios");
 assert.equal(ratioStatements.annualSections[0]?.sectionKey, "ratios");
 
 const diagnostics = buildSnapshotDiagnosticsResponse({
-  metaDocs: [rows.meta],
-  diagnosticsDocs: [rows.diagnostics],
+  metaDocs: [{ ...rows.meta, _creationTime: 2 }],
+  diagnosticsDocs: [
+    {
+      ...rows.diagnostics,
+      cardsJson: [],
+      _creationTime: 1,
+    },
+    { ...rows.diagnostics, _creationTime: 2 },
+  ],
 });
 assert.equal(diagnostics.hasSnapshot, true);
 assert.equal(diagnostics.diagnostics?.length, output.diagnostics.length);

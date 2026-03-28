@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
@@ -37,9 +38,15 @@ export function ScenarioManager({
   currentScenarioId?: string;
   mode: "business" | "workspace";
 }) {
-  const business = useQuery(api.businesses.get, {
-    businessId: businessId as Id<"businesses">,
-  });
+  const { isLoaded, isSignedIn } = useAuth();
+  const business = useQuery(
+    api.businesses.get,
+    isLoaded && isSignedIn
+      ? {
+          businessId: businessId as Id<"businesses">,
+        }
+      : "skip",
+  );
   const createScenario = useMutation(api.scenarios.create);
   const [name, setName] = useState("Base case");
   const [notes, setNotes] = useState("");
@@ -89,7 +96,7 @@ export function ScenarioManager({
     }
   }
 
-  if (business === undefined) {
+  if (!isLoaded || !isSignedIn || business === undefined) {
     return (
       <PageIntro
         eyebrow="Scenario list"

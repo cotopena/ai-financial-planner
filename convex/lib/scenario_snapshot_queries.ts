@@ -7,28 +7,34 @@ import type {
 
 type SnapshotMetaDoc = {
   generatedAt: number;
+  _creationTime?: number;
 };
 
 type SnapshotSummaryDoc = {
   summaryJson: ScenarioOutput["summary"];
+  _creationTime?: number;
 };
 
 type SnapshotDiagnosticsDoc = {
   cardsJson: DiagnosticCard[];
+  _creationTime?: number;
 };
 
 type SnapshotRatiosDoc = {
   ratiosJson: SnapshotRatiosPayload;
+  _creationTime?: number;
 };
 
 type SnapshotMonthlyDoc = {
   sectionKey: string;
   payloadJson: SnapshotSectionMonthlyPayload;
+  _creationTime?: number;
 };
 
 type SnapshotAnnualDoc = {
   sectionKey: string;
   payloadJson: SnapshotSectionAnnualPayload;
+  _creationTime?: number;
 };
 
 export type SnapshotOverviewResponse = {
@@ -51,6 +57,44 @@ export type SnapshotDiagnosticsResponse = {
   diagnostics: DiagnosticCard[] | null;
 };
 
+function sortNewestByCreationTime<T extends { _creationTime?: number }>(docs: T[]) {
+  return [...docs].sort(
+    (left, right) =>
+      (right._creationTime ?? Number.NEGATIVE_INFINITY) -
+      (left._creationTime ?? Number.NEGATIVE_INFINITY),
+  );
+}
+
+function selectNewestMetaDoc(metaDocs: SnapshotMetaDoc[]) {
+  return [...metaDocs].sort((left, right) => {
+    if (left.generatedAt !== right.generatedAt) {
+      return right.generatedAt - left.generatedAt;
+    }
+
+    return (right._creationTime ?? 0) - (left._creationTime ?? 0);
+  })[0];
+}
+
+function selectNewestDoc<T extends { _creationTime?: number }>(docs: T[]) {
+  return sortNewestByCreationTime(docs)[0];
+}
+
+function selectNewestSectionDocs<
+  T extends { sectionKey: string; _creationTime?: number },
+>(docs: T[]) {
+  const newestBySection = new Map<string, T>();
+
+  for (const doc of sortNewestByCreationTime(docs)) {
+    if (!newestBySection.has(doc.sectionKey)) {
+      newestBySection.set(doc.sectionKey, doc);
+    }
+  }
+
+  return [...newestBySection.values()].sort((left, right) =>
+    left.sectionKey.localeCompare(right.sectionKey),
+  );
+}
+
 export function buildSnapshotOverviewResponse({
   metaDocs,
   summaryDocs,
@@ -58,10 +102,13 @@ export function buildSnapshotOverviewResponse({
   metaDocs: SnapshotMetaDoc[];
   summaryDocs: SnapshotSummaryDoc[];
 }): SnapshotOverviewResponse {
+  const newestMeta = selectNewestMetaDoc(metaDocs);
+  const newestSummary = selectNewestDoc(summaryDocs);
+
   return {
-    generatedAt: metaDocs[0]?.generatedAt ?? null,
+    generatedAt: newestMeta?.generatedAt ?? null,
     hasSnapshot: metaDocs.length > 0 || summaryDocs.length > 0,
-    summary: summaryDocs[0]?.summaryJson ?? null,
+    summary: newestSummary?.summaryJson ?? null,
   };
 }
 
@@ -78,21 +125,25 @@ export function buildSnapshotStatementsResponse({
   ratioDocs: SnapshotRatiosDoc[];
   sectionKey?: string;
 }): SnapshotStatementsResponse {
+  const newestMeta = selectNewestMetaDoc(metaDocs);
+  const newestMonthlyDocs = selectNewestSectionDocs(monthlyDocs);
+  const newestAnnualDocs = selectNewestSectionDocs(annualDocs);
+  const newestRatioDoc = selectNewestDoc(ratioDocs);
   const monthlySections =
     sectionKey === undefined
-      ? monthlyDocs
-      : monthlyDocs.filter((doc) => doc.sectionKey === sectionKey);
+      ? newestMonthlyDocs
+      : newestMonthlyDocs.filter((doc) => doc.sectionKey === sectionKey);
   const annualSections =
     sectionKey === undefined
-      ? annualDocs
-      : annualDocs.filter((doc) => doc.sectionKey === sectionKey);
+      ? newestAnnualDocs
+      : newestAnnualDocs.filter((doc) => doc.sectionKey === sectionKey);
   const ratios =
     sectionKey === undefined || sectionKey === "ratios"
-      ? (ratioDocs[0]?.ratiosJson ?? null)
+      ? (newestRatioDoc?.ratiosJson ?? null)
       : null;
 
   return {
-    generatedAt: metaDocs[0]?.generatedAt ?? null,
+    generatedAt: newestMeta?.generatedAt ?? null,
     hasSnapshot:
       metaDocs.length > 0 ||
       monthlyDocs.length > 0 ||
@@ -111,9 +162,12 @@ export function buildSnapshotDiagnosticsResponse({
   metaDocs: SnapshotMetaDoc[];
   diagnosticsDocs: SnapshotDiagnosticsDoc[];
 }): SnapshotDiagnosticsResponse {
+  const newestMeta = selectNewestMetaDoc(metaDocs);
+  const newestDiagnostics = selectNewestDoc(diagnosticsDocs);
+
   return {
-    generatedAt: metaDocs[0]?.generatedAt ?? null,
+    generatedAt: newestMeta?.generatedAt ?? null,
     hasSnapshot: metaDocs.length > 0 || diagnosticsDocs.length > 0,
-    diagnostics: diagnosticsDocs[0]?.cardsJson ?? null,
+    diagnostics: newestDiagnostics?.cardsJson ?? null,
   };
 }

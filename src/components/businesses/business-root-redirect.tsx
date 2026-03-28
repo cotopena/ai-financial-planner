@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
@@ -8,13 +9,19 @@ import { api } from "../../../convex/_generated/api";
 import { PageIntro } from "@/components/workspace/page-intro";
 
 export function BusinessRootRedirect({ businessId }: { businessId: string }) {
+  const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
-  const business = useQuery(api.businesses.get, {
-    businessId: businessId as Id<"businesses">,
-  });
+  const business = useQuery(
+    api.businesses.get,
+    isLoaded && isSignedIn
+      ? {
+          businessId: businessId as Id<"businesses">,
+        }
+      : "skip",
+  );
 
   useEffect(() => {
-    if (business === undefined) {
+    if (!isLoaded || !isSignedIn || business === undefined) {
       return;
     }
 
@@ -27,7 +34,7 @@ export function BusinessRootRedirect({ businessId }: { businessId: string }) {
         ? `/app/businesses/${businessId}/scenarios/${destination}/overview`
         : `/app/businesses/${businessId}/scenarios`,
     );
-  }, [business, businessId, router]);
+  }, [business, businessId, isLoaded, isSignedIn, router]);
 
   return (
     <PageIntro

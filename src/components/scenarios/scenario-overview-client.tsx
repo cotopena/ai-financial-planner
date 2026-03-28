@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { api } from "../../../convex/_generated/api";
@@ -35,19 +36,30 @@ function formatTimestamp(value: number) {
 }
 
 export function ScenarioOverviewClient({ scenarioId }: { scenarioId: string }) {
-  const data = useQuery(api.scenarios.get, {
-    scenarioId: scenarioId as Id<"scenarios">,
-  });
-  const overview = useQuery(api.snapshots.getOverview, {
-    scenarioId: scenarioId as Id<"scenarios">,
-  });
+  const { isLoaded, isSignedIn } = useAuth();
+  const data = useQuery(
+    api.scenarios.get,
+    isLoaded && isSignedIn
+      ? {
+          scenarioId: scenarioId as Id<"scenarios">,
+        }
+      : "skip",
+  );
+  const overview = useQuery(
+    api.snapshots.getOverview,
+    isLoaded && isSignedIn
+      ? {
+          scenarioId: scenarioId as Id<"scenarios">,
+        }
+      : "skip",
+  );
 
-  if (data === undefined || overview === undefined) {
+  if (!isLoaded || !isSignedIn || data === undefined || overview === undefined) {
     return (
       <PageIntro
         eyebrow="Scenario overview"
         title="Executive summary"
-        description="Loading the active business and scenario metadata from Convex."
+        description="Loading the active business, scenario, and snapshot metadata from Convex."
       />
     );
   }

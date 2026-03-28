@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -34,11 +35,17 @@ function getSeverityVariant(severity: "info" | "warning" | "critical") {
 }
 
 export function ScenarioDiagnosticsClient({ scenarioId }: { scenarioId: string }) {
-  const snapshot = useQuery(api.snapshots.getDiagnostics, {
-    scenarioId: scenarioId as Id<"scenarios">,
-  });
+  const { isLoaded, isSignedIn } = useAuth();
+  const snapshot = useQuery(
+    api.snapshots.getDiagnostics,
+    isLoaded && isSignedIn
+      ? {
+          scenarioId: scenarioId as Id<"scenarios">,
+        }
+      : "skip",
+  );
 
-  if (snapshot === undefined) {
+  if (!isLoaded || !isSignedIn || snapshot === undefined) {
     return (
       <PageIntro
         eyebrow="Diagnostics"

@@ -12,6 +12,7 @@ import type * as ai from "../ai.js";
 import type * as assumptions from "../assumptions.js";
 import type * as billing from "../billing.js";
 import type * as businesses from "../businesses.js";
+import type * as dev from "../dev.js";
 import type * as engine from "../engine.js";
 import type * as exports from "../exports.js";
 import type * as http from "../http.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   assumptions: typeof assumptions;
   billing: typeof billing;
   businesses: typeof businesses;
+  dev: typeof dev;
   engine: typeof engine;
   exports: typeof exports;
   http: typeof http;

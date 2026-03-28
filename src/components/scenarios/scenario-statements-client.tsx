@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Route } from "next";
+import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -108,13 +109,19 @@ export function ScenarioStatementsClient({
   scenarioId: string;
   statement: StatementSlug;
 }) {
-  const snapshot = useQuery(api.snapshots.getStatements, {
-    scenarioId: scenarioId as Id<"scenarios">,
-    sectionKey: statement,
-  });
+  const { isLoaded, isSignedIn } = useAuth();
+  const snapshot = useQuery(
+    api.snapshots.getStatements,
+    isLoaded && isSignedIn
+      ? {
+          scenarioId: scenarioId as Id<"scenarios">,
+          sectionKey: statement,
+        }
+      : "skip",
+  );
   const definition = statementDefinitions[statement];
 
-  if (snapshot === undefined) {
+  if (!isLoaded || !isSignedIn || snapshot === undefined) {
     return (
       <PageIntro
         eyebrow="Statements"

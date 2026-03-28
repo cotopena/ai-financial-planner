@@ -71,4 +71,6 @@ export const integrationStatus = [
   },
 ] as const;
 
+export type IntegrationStatusItem = (typeof integrationStatus)[number];
+
 export { env };
