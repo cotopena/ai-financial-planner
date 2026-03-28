@@ -32,10 +32,12 @@ export const SectionPayloadSchema = z.object({
   notes: z.array(z.string()),
 });
 
-export const RevenueMetricSeriesSchema = z.object({
+export const ValueSeriesSchema = z.object({
   monthly: z.array(MonthlyValueSchema),
   annual: z.array(AnnualValueSchema),
 });
+
+export const RevenueMetricSeriesSchema = ValueSeriesSchema;
 
 export const AppliedRevenueOverrideSchema = z.object({
   overrideKey: z.string(),
@@ -95,6 +97,153 @@ export const RevenueSectionPayloadSchema = SectionPayloadSchema.extend({
   appliedOverrides: z.array(AppliedRevenueOverrideSchema),
 });
 
+export const OpeningPositionTotalsSchema = z.object({
+  totalFixedAssets: z.number(),
+  totalStartupCosts: z.number(),
+  totalRequiredFunds: z.number(),
+  totalFundingSources: z.number(),
+  fundingGap: z.number(),
+  fundingSurplus: z.number(),
+  netFundingDifference: z.number(),
+  isBalanced: z.boolean(),
+  openingCash: z.number(),
+  accountsReceivable: z.number(),
+  prepaidExpenses: z.number(),
+  accountsPayable: z.number(),
+  accruedExpenses: z.number(),
+  openingCashPosition: z.number(),
+});
+
+export const OpeningPositionSectionPayloadSchema = SectionPayloadSchema.extend({
+  totals: OpeningPositionTotalsSchema,
+});
+
+export const DebtScheduleMonthlyValueSchema = z.object({
+  monthIndex: z.number().int().min(1).max(36),
+  label: z.string(),
+  payment: z.number(),
+  interest: z.number(),
+  principal: z.number(),
+  endingBalance: z.number(),
+});
+
+export const DebtScheduleAnnualValueSchema = z.object({
+  yearBucket: z.number().int().min(1).max(3),
+  label: z.string(),
+  payment: z.number(),
+  interest: z.number(),
+  principal: z.number(),
+  endingBalance: z.number(),
+});
+
+export const DebtScheduleItemSchema = z.object({
+  debtKey: z.string(),
+  sortOrder: z.number().int(),
+  category: z.string(),
+  originalAmount: z.number(),
+  interestRate: z.number(),
+  termMonths: z.number().int(),
+  standardPayment: z.number(),
+  monthlyPaymentOverride: z.number().optional(),
+  notes: z.array(z.string()),
+  monthly: z.array(DebtScheduleMonthlyValueSchema),
+  annual: z.array(DebtScheduleAnnualValueSchema),
+});
+
+export const DebtSchedulesTotalsSchema = z.object({
+  payment: ValueSeriesSchema,
+  interest: ValueSeriesSchema,
+  principal: ValueSeriesSchema,
+  endingBalance: ValueSeriesSchema,
+});
+
+export const DebtSchedulesSectionPayloadSchema = SectionPayloadSchema.extend({
+  loans: z.array(DebtScheduleItemSchema),
+  totals: DebtSchedulesTotalsSchema,
+});
+
+export const DepreciationBasisEntrySchema = z.object({
+  monthIndex: z.number().int().min(1).max(36),
+  label: z.string(),
+  amount: z.number(),
+  source: z.enum([
+    "opening-balance",
+    "explicit-month",
+    "year2-fallback",
+    "year3-fallback",
+  ]),
+});
+
+export const DepreciationMonthlyValueSchema = z.object({
+  monthIndex: z.number().int().min(1).max(36),
+  label: z.string(),
+  expense: z.number(),
+  endingBookValue: z.number(),
+});
+
+export const DepreciationAnnualValueSchema = z.object({
+  yearBucket: z.number().int().min(1).max(3),
+  label: z.string(),
+  expense: z.number(),
+  endingBookValue: z.number(),
+});
+
+export const DepreciationItemSchema = z.object({
+  itemKey: z.string(),
+  sortOrder: z.number().int(),
+  sourceType: z.enum(["opening-asset", "capex"]),
+  category: z.string(),
+  originalAmount: z.number(),
+  depreciationYears: z.number(),
+  acquisitionSchedule: z.array(DepreciationBasisEntrySchema),
+  monthly: z.array(DepreciationMonthlyValueSchema),
+  annual: z.array(DepreciationAnnualValueSchema),
+});
+
+export const DepreciationTotalsSchema = z.object({
+  expense: ValueSeriesSchema,
+  endingBookValue: ValueSeriesSchema,
+});
+
+export const DepreciationSectionPayloadSchema = SectionPayloadSchema.extend({
+  items: z.array(DepreciationItemSchema),
+  totals: DepreciationTotalsSchema,
+});
+
+export const AmortizationMonthlyValueSchema = z.object({
+  monthIndex: z.number().int().min(1).max(36),
+  label: z.string(),
+  expense: z.number(),
+  endingBalance: z.number(),
+});
+
+export const AmortizationAnnualValueSchema = z.object({
+  yearBucket: z.number().int().min(1).max(3),
+  label: z.string(),
+  expense: z.number(),
+  endingBalance: z.number(),
+});
+
+export const AmortizationItemSchema = z.object({
+  itemKey: z.string(),
+  sortOrder: z.number().int(),
+  category: z.string(),
+  originalAmount: z.number(),
+  amortizationYears: z.number(),
+  monthly: z.array(AmortizationMonthlyValueSchema),
+  annual: z.array(AmortizationAnnualValueSchema),
+});
+
+export const AmortizationTotalsSchema = z.object({
+  expense: ValueSeriesSchema,
+  endingBalance: ValueSeriesSchema,
+});
+
+export const AmortizationSectionPayloadSchema = SectionPayloadSchema.extend({
+  items: z.array(AmortizationItemSchema),
+  totals: AmortizationTotalsSchema,
+});
+
 export const DiagnosticCardSchema = z.object({
   severity: z.enum(["info", "warning", "critical"]),
   title: z.string(),
@@ -116,10 +265,10 @@ export const ScenarioOutputSchema = z.object({
   periods: z.array(EnginePeriodSchema),
   summary: ScenarioSummarySchema,
   sections: z.object({
-    openingPosition: SectionPayloadSchema,
-    debtSchedules: SectionPayloadSchema,
-    depreciation: SectionPayloadSchema,
-    amortization: SectionPayloadSchema,
+    openingPosition: OpeningPositionSectionPayloadSchema,
+    debtSchedules: DebtSchedulesSectionPayloadSchema,
+    depreciation: DepreciationSectionPayloadSchema,
+    amortization: AmortizationSectionPayloadSchema,
     revenue: RevenueSectionPayloadSchema,
     payroll: SectionPayloadSchema,
     operatingExpenses: SectionPayloadSchema,
@@ -138,7 +287,8 @@ export type EnginePeriod = z.infer<typeof EnginePeriodSchema>;
 export type MonthlyValue = z.infer<typeof MonthlyValueSchema>;
 export type AnnualValue = z.infer<typeof AnnualValueSchema>;
 export type SectionPayload = z.infer<typeof SectionPayloadSchema>;
-export type RevenueMetricSeries = z.infer<typeof RevenueMetricSeriesSchema>;
+export type ValueSeries = z.infer<typeof ValueSeriesSchema>;
+export type RevenueMetricSeries = ValueSeries;
 export type AppliedRevenueOverride = z.infer<
   typeof AppliedRevenueOverrideSchema
 >;
@@ -153,6 +303,46 @@ export type RevenueTotals = z.infer<typeof RevenueTotalsSchema>;
 export type RevenueSectionPayload = z.infer<
   typeof RevenueSectionPayloadSchema
 >;
+export type OpeningPositionTotals = z.infer<typeof OpeningPositionTotalsSchema>;
+export type OpeningPositionSectionPayload = z.infer<
+  typeof OpeningPositionSectionPayloadSchema
+>;
+export type DebtScheduleMonthlyValue = z.infer<
+  typeof DebtScheduleMonthlyValueSchema
+>;
+export type DebtScheduleAnnualValue = z.infer<
+  typeof DebtScheduleAnnualValueSchema
+>;
+export type DebtScheduleItem = z.infer<typeof DebtScheduleItemSchema>;
+export type DebtSchedulesTotals = z.infer<typeof DebtSchedulesTotalsSchema>;
+export type DebtSchedulesSectionPayload = z.infer<
+  typeof DebtSchedulesSectionPayloadSchema
+>;
+export type DepreciationBasisEntry = z.infer<
+  typeof DepreciationBasisEntrySchema
+>;
+export type DepreciationMonthlyValue = z.infer<
+  typeof DepreciationMonthlyValueSchema
+>;
+export type DepreciationAnnualValue = z.infer<
+  typeof DepreciationAnnualValueSchema
+>;
+export type DepreciationItem = z.infer<typeof DepreciationItemSchema>;
+export type DepreciationTotals = z.infer<typeof DepreciationTotalsSchema>;
+export type DepreciationSectionPayload = z.infer<
+  typeof DepreciationSectionPayloadSchema
+>;
+export type AmortizationMonthlyValue = z.infer<
+  typeof AmortizationMonthlyValueSchema
+>;
+export type AmortizationAnnualValue = z.infer<
+  typeof AmortizationAnnualValueSchema
+>;
+export type AmortizationItem = z.infer<typeof AmortizationItemSchema>;
+export type AmortizationTotals = z.infer<typeof AmortizationTotalsSchema>;
+export type AmortizationSectionPayload = z.infer<
+  typeof AmortizationSectionPayloadSchema
+>;
 export type DiagnosticCard = z.infer<typeof DiagnosticCardSchema>;
 export type ScenarioOutput = z.infer<typeof ScenarioOutputSchema>;
 
@@ -164,7 +354,7 @@ export function createEmptyScenarioOutput(): ScenarioOutput {
     notes: [],
   });
 
-  const emptyRevenueSeries = (): RevenueMetricSeries => ({
+  const emptyValueSeries = (): ValueSeries => ({
     monthly: [],
     annual: [],
   });
@@ -176,13 +366,78 @@ export function createEmptyScenarioOutput(): ScenarioOutput {
     notes: [],
     lineItems: [],
     totals: {
-      units: emptyRevenueSeries(),
-      sales: emptyRevenueSeries(),
-      cogs: emptyRevenueSeries(),
-      margin: emptyRevenueSeries(),
+      units: emptyValueSeries(),
+      sales: emptyValueSeries(),
+      cogs: emptyValueSeries(),
+      margin: emptyValueSeries(),
     },
     appliedOverrides: [],
   });
+
+  const emptyOpeningPositionSection =
+    (): OpeningPositionSectionPayload => ({
+      sectionKey: "opening-position",
+      monthly: [],
+      annual: [],
+      notes: [],
+      totals: {
+        totalFixedAssets: 0,
+        totalStartupCosts: 0,
+        totalRequiredFunds: 0,
+        totalFundingSources: 0,
+        fundingGap: 0,
+        fundingSurplus: 0,
+        netFundingDifference: 0,
+        isBalanced: true,
+        openingCash: 0,
+        accountsReceivable: 0,
+        prepaidExpenses: 0,
+        accountsPayable: 0,
+        accruedExpenses: 0,
+        openingCashPosition: 0,
+      },
+    });
+
+  const emptyDebtSchedulesSection =
+    (): DebtSchedulesSectionPayload => ({
+      sectionKey: "debt-schedules",
+      monthly: [],
+      annual: [],
+      notes: [],
+      loans: [],
+      totals: {
+        payment: emptyValueSeries(),
+        interest: emptyValueSeries(),
+        principal: emptyValueSeries(),
+        endingBalance: emptyValueSeries(),
+      },
+    });
+
+  const emptyDepreciationSection =
+    (): DepreciationSectionPayload => ({
+      sectionKey: "depreciation",
+      monthly: [],
+      annual: [],
+      notes: [],
+      items: [],
+      totals: {
+        expense: emptyValueSeries(),
+        endingBookValue: emptyValueSeries(),
+      },
+    });
+
+  const emptyAmortizationSection =
+    (): AmortizationSectionPayload => ({
+      sectionKey: "amortization",
+      monthly: [],
+      annual: [],
+      notes: [],
+      items: [],
+      totals: {
+        expense: emptyValueSeries(),
+        endingBalance: emptyValueSeries(),
+      },
+    });
 
   return {
     generatedAt: new Date(0).toISOString(),
@@ -196,10 +451,10 @@ export function createEmptyScenarioOutput(): ScenarioOutput {
       dscr: 0,
     },
     sections: {
-      openingPosition: emptySection("opening-position"),
-      debtSchedules: emptySection("debt-schedules"),
-      depreciation: emptySection("depreciation"),
-      amortization: emptySection("amortization"),
+      openingPosition: emptyOpeningPositionSection(),
+      debtSchedules: emptyDebtSchedulesSection(),
+      depreciation: emptyDepreciationSection(),
+      amortization: emptyAmortizationSection(),
       revenue: emptyRevenueSection(),
       payroll: emptySection("payroll"),
       operatingExpenses: emptySection("operating-expenses"),

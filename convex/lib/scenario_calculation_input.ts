@@ -51,17 +51,20 @@ export function buildScenarioCalculationInput(
       currentVersion: records.scenario.currentVersion,
     },
     openingAssets: records.openingAssets.map((asset) => ({
+      assetKey: String(asset._id),
       category: asset.category,
       amount: asset.amount,
       depreciationYears: asset.depreciationYears,
       notes: asset.notes,
     })),
     startupCosts: records.startupCosts.map((cost) => ({
+      costKey: String(cost._id),
       category: cost.category,
       amount: cost.amount,
       notes: cost.notes,
     })),
     fundingSources: records.fundingSources.map((source) => ({
+      sourceKey: String(source._id),
       category: source.category,
       amount: source.amount,
       interestRate: source.interestRate,
@@ -182,6 +185,7 @@ export function buildScenarioCalculationInput(
         }
       : defaults.workingCapitalSettings,
     capexLines: records.capexLines.map((line) => ({
+      lineKey: String(line._id),
       category: line.category,
       depreciationYears: line.depreciationYears,
       year2AnnualAmount: line.year2AnnualAmount,

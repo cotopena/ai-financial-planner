@@ -7,16 +7,22 @@ import type {
   ScenarioOutput,
 } from "../../src/engine/schemas/output-schema";
 
+type ScenarioSection = ScenarioOutput["sections"][keyof ScenarioOutput["sections"]];
+
+export type SnapshotSectionDetailsJson = Record<string, unknown>;
+
 export type SnapshotSectionMonthlyPayload = {
   sectionKey: string;
   notes: string[];
   monthly: MonthlyValue[];
+  detailsJson?: SnapshotSectionDetailsJson;
 };
 
 export type SnapshotSectionAnnualPayload = {
   sectionKey: string;
   notes: string[];
   annual: AnnualValue[];
+  detailsJson?: SnapshotSectionDetailsJson;
 };
 
 export type SnapshotRatiosPayload = {
@@ -80,6 +86,23 @@ function toGeneratedAt(output: ScenarioOutput) {
   return Number.isNaN(parsed) ? Date.now() : parsed;
 }
 
+function extractSectionDetails(
+  section: ScenarioSection,
+): SnapshotSectionDetailsJson | undefined {
+  const details = {
+    ...section,
+  } as SnapshotSectionDetailsJson;
+
+  delete details.sectionKey;
+  delete details.monthly;
+  delete details.annual;
+  delete details.notes;
+
+  return Object.keys(details).length === 0
+    ? undefined
+    : details;
+}
+
 export function serializeScenarioSnapshotRows({
   output,
   ratioNorms,
@@ -87,7 +110,10 @@ export function serializeScenarioSnapshotRows({
   output: ScenarioOutput;
   ratioNorms: RatioNorm[];
 }): ScenarioSnapshotRows {
-  const sections = Object.values(output.sections);
+  const sections = Object.values(output.sections).map((section) => ({
+    section,
+    detailsJson: extractSectionDetails(section),
+  }));
 
   return {
     meta: {
@@ -108,20 +134,22 @@ export function serializeScenarioSnapshotRows({
         norms: ratioNorms,
       },
     },
-    monthly: sections.map((section) => ({
+    monthly: sections.map(({ section, detailsJson }) => ({
       sectionKey: section.sectionKey,
       payloadJson: {
         sectionKey: section.sectionKey,
         notes: section.notes,
         monthly: section.monthly,
+        detailsJson,
       },
     })),
-    annual: sections.map((section) => ({
+    annual: sections.map(({ section, detailsJson }) => ({
       sectionKey: section.sectionKey,
       payloadJson: {
         sectionKey: section.sectionKey,
         notes: section.notes,
         annual: section.annual,
+        detailsJson,
       },
     })),
   };
