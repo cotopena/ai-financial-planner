@@ -1,25 +1,30 @@
 import { notFound } from "next/navigation";
-import { RoutePage } from "@/components/workspace/route-page";
-import { statementContent } from "@/lib/route-content";
+import { ScenarioStatementsClient } from "@/components/scenarios/scenario-statements-client";
+import {
+  isStatementSlug,
+  type StatementSlug,
+} from "@/lib/scenario-reporting";
 
 export default async function StatementPage({
   params,
 }: {
-  params: Promise<{ statement: keyof typeof statementContent }>;
+  params: Promise<{
+    businessId: string;
+    scenarioId: string;
+    statement: string;
+  }>;
 }) {
-  const { statement } = await params;
-  const content = statementContent[statement];
+  const { businessId, scenarioId, statement } = await params;
 
-  if (!content) {
+  if (!isStatementSlug(statement)) {
     notFound();
   }
 
   return (
-    <RoutePage
-      eyebrow="Statements"
-      title={content.title}
-      description={content.description}
-      sections={content.sections}
+    <ScenarioStatementsClient
+      businessId={businessId}
+      scenarioId={scenarioId}
+      statement={statement as StatementSlug}
     />
   );
 }
