@@ -212,6 +212,7 @@ export type RevenueMetric = z.infer<typeof RevenueMetricSchema>;
 export type RevenueOverrideSource = z.infer<typeof RevenueOverrideSourceSchema>;
 export type RevenueLine = z.infer<typeof RevenueLineSchema>;
 export type RevenueOverride = z.infer<typeof RevenueOverrideSchema>;
+export type RatioNorm = z.infer<typeof RatioNormSchema>;
 
 export function createEmptyScenarioInput(): NormalizedScenarioInput {
   return {

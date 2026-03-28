@@ -81,36 +81,80 @@ export const getWorkspace = query({
             .withIndex("by_scenario", (q) => q.eq("scenarioId", args.scenarioId))
             .collect(),
         };
-      case "expenses":
+      case "expenses": {
+        const operatingExpenseLines = await ctx.db
+          .query("operating_expense_lines")
+          .withIndex("by_scenario_sort_order", (q) =>
+            q.eq("scenarioId", args.scenarioId),
+          )
+          .collect();
+        const operatingExpenseMonths = Object.fromEntries(
+          await Promise.all(
+            operatingExpenseLines.map(async (line) => [
+              String(line._id),
+              await ctx.db
+                .query("operating_expense_months")
+                .withIndex("by_expense_line_month", (q) =>
+                  q.eq("expenseLineId", line._id),
+                )
+                .collect(),
+            ]),
+          ),
+        );
+
         return {
           scenario,
-          operatingExpenseLines: await ctx.db
-            .query("operating_expense_lines")
-            .withIndex("by_scenario_sort_order", (q) =>
-              q.eq("scenarioId", args.scenarioId),
-            )
-            .collect(),
+          operatingExpenseLines,
+          operatingExpenseMonths,
         };
-      case "cash-financing":
+      }
+      case "cash-financing": {
+        const capexLines = await ctx.db
+          .query("capex_lines")
+          .withIndex("by_scenario_category", (q) =>
+            q.eq("scenarioId", args.scenarioId),
+          )
+          .collect();
+        const capexMonths = Object.fromEntries(
+          await Promise.all(
+            capexLines.map(async (line) => [
+              String(line._id),
+              await ctx.db
+                .query("capex_months")
+                .withIndex("by_capex_line_month", (q) =>
+                  q.eq("capexLineId", line._id),
+                )
+                .collect(),
+            ]),
+          ),
+        );
+
         return {
           scenario,
           workingCapitalSettings: await ctx.db
             .query("working_capital_settings")
             .withIndex("by_scenario", (q) => q.eq("scenarioId", args.scenarioId))
             .unique(),
-          capexLines: await ctx.db
-            .query("capex_lines")
-            .withIndex("by_scenario", (q) => q.eq("scenarioId", args.scenarioId))
-            .collect(),
+          capexLines,
+          capexMonths,
           taxSettings: await ctx.db
             .query("tax_settings")
             .withIndex("by_scenario", (q) => q.eq("scenarioId", args.scenarioId))
             .unique(),
           cashAdjustmentMonths: await ctx.db
             .query("cash_adjustment_months")
-            .withIndex("by_scenario", (q) => q.eq("scenarioId", args.scenarioId))
+            .withIndex("by_scenario_month", (q) =>
+              q.eq("scenarioId", args.scenarioId),
+            )
+            .collect(),
+          ratioNorms: await ctx.db
+            .query("ratio_norms")
+            .withIndex("by_scenario_ratio", (q) =>
+              q.eq("scenarioId", args.scenarioId),
+            )
             .collect(),
         };
+      }
     }
   },
 });

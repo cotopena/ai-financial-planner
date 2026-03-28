@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import type { FormEvent } from "react";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -36,10 +37,16 @@ type BusinessSettingsFormState = {
 };
 
 export function BusinessSettingsForm({ businessId }: { businessId: string }) {
+  const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
-  const business = useQuery(api.businesses.get, {
-    businessId: businessId as Id<"businesses">,
-  });
+  const business = useQuery(
+    api.businesses.get,
+    isLoaded && isSignedIn
+      ? {
+          businessId: businessId as Id<"businesses">,
+        }
+      : "skip",
+  );
   const updateBusiness = useMutation(api.businesses.updateMeta);
   const [form, setForm] = useState<BusinessSettingsFormState | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -137,7 +144,7 @@ export function BusinessSettingsForm({ businessId }: { businessId: string }) {
     }
   }
 
-  if (business === undefined || !form) {
+  if (!isLoaded || !isSignedIn || business === undefined || !form) {
     return (
       <PageIntro
         eyebrow="Business settings"

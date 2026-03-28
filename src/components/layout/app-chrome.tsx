@@ -5,7 +5,6 @@ import type { Route } from "next";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { AuthMenu } from "@/components/auth/auth-menu";
-import { ConfigurationStatus } from "@/components/layout/configuration-status";
 import { Badge } from "@/components/ui/badge";
 import { appNavItems } from "@/lib/route-data";
 import { api } from "../../../convex/_generated/api";
@@ -18,7 +17,13 @@ function formatSubscriptionLabel(planKey: string | undefined, status: string | u
   return `${planKey.charAt(0).toUpperCase()}${planKey.slice(1)} • ${status}`;
 }
 
-export function AppChrome({ children }: { children: ReactNode }) {
+export function AppChrome({
+  children,
+  configurationStatus,
+}: {
+  children: ReactNode;
+  configurationStatus: ReactNode;
+}) {
   const subscription = useQuery(api.billing.getCurrentSubscription);
 
   return (
@@ -66,7 +71,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
               ))}
             </nav>
           </div>
-          <ConfigurationStatus />
+          {configurationStatus}
         </aside>
 
         <main className="space-y-6">{children}</main>

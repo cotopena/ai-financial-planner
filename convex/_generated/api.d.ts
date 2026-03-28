@@ -12,6 +12,7 @@ import type * as ai from "../ai.js";
 import type * as assumptions from "../assumptions.js";
 import type * as billing from "../billing.js";
 import type * as businesses from "../businesses.js";
+import type * as dev from "../dev.js";
 import type * as engine from "../engine.js";
 import type * as exports from "../exports.js";
 import type * as http from "../http.js";
@@ -19,7 +20,10 @@ import type * as imports from "../imports.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_scenario_calculation_input from "../lib/scenario_calculation_input.js";
 import type * as lib_scenario_records from "../lib/scenario_records.js";
+import type * as lib_scenario_snapshot_queries from "../lib/scenario_snapshot_queries.js";
+import type * as lib_scenario_snapshot_rows from "../lib/scenario_snapshot_rows.js";
 import type * as scenarios from "../scenarios.js";
+import type * as snapshot_writes from "../snapshot_writes.js";
 import type * as snapshots from "../snapshots.js";
 
 import type {
@@ -33,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   assumptions: typeof assumptions;
   billing: typeof billing;
   businesses: typeof businesses;
+  dev: typeof dev;
   engine: typeof engine;
   exports: typeof exports;
   http: typeof http;
@@ -40,7 +45,10 @@ declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/scenario_calculation_input": typeof lib_scenario_calculation_input;
   "lib/scenario_records": typeof lib_scenario_records;
+  "lib/scenario_snapshot_queries": typeof lib_scenario_snapshot_queries;
+  "lib/scenario_snapshot_rows": typeof lib_scenario_snapshot_rows;
   scenarios: typeof scenarios;
+  snapshot_writes: typeof snapshot_writes;
   snapshots: typeof snapshots;
 }>;
 

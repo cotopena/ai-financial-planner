@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -28,10 +29,17 @@ function formatPlanLabel(planKey: string | null | undefined) {
 }
 
 export function DashboardClient() {
-  const businesses = useQuery(api.businesses.listByUser);
-  const subscription = useQuery(api.billing.getCurrentSubscription);
+  const { isLoaded, isSignedIn } = useAuth();
+  const businesses = useQuery(
+    api.businesses.listByUser,
+    isLoaded && isSignedIn ? {} : "skip",
+  );
+  const subscription = useQuery(
+    api.billing.getCurrentSubscription,
+    isLoaded && isSignedIn ? {} : "skip",
+  );
 
-  if (businesses === undefined) {
+  if (!isLoaded || !isSignedIn || businesses === undefined) {
     return (
       <div className="space-y-6">
         <PageIntro
