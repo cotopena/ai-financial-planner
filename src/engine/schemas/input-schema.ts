@@ -24,6 +24,7 @@ export const ScenarioMetadataSchema = z.object({
 });
 
 export const OpeningAssetSchema = z.object({
+  assetKey: z.string().optional(),
   category: z.string(),
   amount: z.number(),
   depreciationYears: z.number().optional(),
@@ -31,12 +32,14 @@ export const OpeningAssetSchema = z.object({
 });
 
 export const StartupCostSchema = z.object({
+  costKey: z.string().optional(),
   category: z.string(),
   amount: z.number(),
   notes: z.string().optional(),
 });
 
 export const FundingSourceSchema = z.object({
+  sourceKey: z.string().optional(),
   category: z.string(),
   amount: z.number(),
   interestRate: z.number().optional(),
@@ -150,6 +153,7 @@ export const WorkingCapitalSettingsSchema = z.object({
 });
 
 export const CapexLineSchema = z.object({
+  lineKey: z.string().optional(),
   category: z.string(),
   depreciationYears: z.number(),
   year2AnnualAmount: z.number(),

@@ -11,7 +11,7 @@ import {
   summarizeScenarioSnapshotRows,
 } from "../convex/lib/scenario_snapshot_rows";
 import { calculateScenario } from "../src/engine/orchestrator/calculate-scenario";
-import { revenueParityFixtures } from "../src/engine/parity/revenue-fixtures";
+import { foundationParityFixtures } from "../src/engine/parity/foundation-fixtures";
 
 type SnapshotTableName =
   | "scenario_snapshot_meta"
@@ -28,7 +28,7 @@ function fakeId<TableName extends SnapshotTableName>(
   return `${tableName}-${index}` as Id<TableName>;
 }
 
-const fixture = revenueParityFixtures[0];
+const fixture = foundationParityFixtures[1];
 const input = {
   ...fixture.input,
   ratioNorms: [
@@ -63,6 +63,20 @@ assert(summary.monthlySections.includes("income-statement"));
 assert(summary.annualSections.includes("ratios"));
 assert.equal(rows.summary.summaryJson.revenue, output.summary.revenue);
 assert.equal(rows.ratios.ratiosJson.norms[0]?.ratioKey, "current-ratio");
+assert.equal(
+  (
+    rows.monthly.find((row) => row.sectionKey === "debt-schedules")?.payloadJson
+      .detailsJson as { loans?: unknown[] } | undefined
+  )?.loans?.length,
+  output.sections.debtSchedules.loans.length,
+);
+assert.equal(
+  (
+    rows.annual.find((row) => row.sectionKey === "opening-position")?.payloadJson
+      .detailsJson as { totals?: { openingCashPosition?: number } } | undefined
+  )?.totals?.openingCashPosition,
+  output.sections.openingPosition.totals.openingCashPosition,
+);
 
 const replacementPlan = planScenarioSnapshotReplacement({
   existing: {

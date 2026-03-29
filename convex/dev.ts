@@ -1,3 +1,4 @@
+import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation } from "./_generated/server";
 import type { MutationCtx } from "./_generated/server";
@@ -281,6 +282,475 @@ export const seedScenarioReporting = mutation({
       businessId,
       scenarioId,
       overviewUrl: `/app/businesses/${businessId}/scenarios/${scenarioId}/overview`,
+    };
+  },
+});
+
+const foundationFixtureKey = v.union(
+  v.literal("startup-no-debt"),
+  v.literal("startup-multiple-debt"),
+  v.literal("ongoing-opening-balances"),
+);
+
+type FoundationSeedFixtureKey =
+  | "startup-no-debt"
+  | "startup-multiple-debt"
+  | "ongoing-opening-balances";
+
+type FoundationSeedFixture = {
+  businessName: string;
+  companyName: string;
+  scenarioName: string;
+  businessMarker: string;
+  scenarioMarker: string;
+  businessStage: "startup" | "ongoing";
+  businessProfile: string;
+  openingAssets: Array<{
+    category: string;
+    amount: number;
+    depreciationYears?: number;
+    notes?: string;
+  }>;
+  startupCosts: Array<{
+    category: string;
+    amount: number;
+    notes?: string;
+  }>;
+  fundingSources: Array<{
+    category: string;
+    amount: number;
+    interestRate?: number;
+    termMonths?: number;
+    monthlyPaymentOverride?: number;
+    notes?: string;
+  }>;
+  openingBalances: {
+    cash: number;
+    accountsReceivable: number;
+    prepaidExpenses: number;
+    accountsPayable: number;
+    accruedExpenses: number;
+  };
+  capexLines: Array<{
+    seedKey: string;
+    category: string;
+    depreciationYears: number;
+    year2AnnualAmount: number;
+    year3AnnualAmount: number;
+  }>;
+  capexMonths: Record<string, Array<{ monthIndex: number; amount: number }>>;
+  taxSettings: {
+    year1TaxRate: number;
+    year2TaxRate: number;
+    year3TaxRate: number;
+    amortizationYears: number;
+  };
+};
+
+const FOUNDATION_SEED_FIXTURES: Record<
+  FoundationSeedFixtureKey,
+  FoundationSeedFixture
+> = {
+  "startup-no-debt": {
+    businessName: "PLAN-1004 Startup No Debt Seed",
+    companyName: "PLAN-1004 Startup No Debt LLC",
+    scenarioName: "Foundation startup no debt seed",
+    businessMarker: "dev-seed:plan-1004-startup-no-debt-business",
+    scenarioMarker: "dev-seed:plan-1004-startup-no-debt-scenario",
+    businessStage: "startup",
+    businessProfile: "services",
+    openingAssets: [
+      {
+        category: "equipment",
+        amount: 12000,
+        depreciationYears: 5,
+      },
+      {
+        category: "land",
+        amount: 5000,
+      },
+    ],
+    startupCosts: [
+      {
+        category: "pre_opening_wages",
+        amount: 6000,
+      },
+      {
+        category: "working_capital_cash_on_hand",
+        amount: 12000,
+      },
+    ],
+    fundingSources: [
+      {
+        category: "owner_equity",
+        amount: 35000,
+      },
+    ],
+    openingBalances: {
+      cash: 0,
+      accountsReceivable: 0,
+      prepaidExpenses: 0,
+      accountsPayable: 0,
+      accruedExpenses: 0,
+    },
+    capexLines: [],
+    capexMonths: {},
+    taxSettings: {
+      year1TaxRate: 0,
+      year2TaxRate: 0,
+      year3TaxRate: 0,
+      amortizationYears: 5,
+    },
+  },
+  "startup-multiple-debt": {
+    businessName: "PLAN-1004 Startup Multiple Debt Seed",
+    companyName: "PLAN-1004 Startup Multiple Debt LLC",
+    scenarioName: "Foundation startup multiple debt seed",
+    businessMarker: "dev-seed:plan-1004-startup-multiple-debt-business",
+    scenarioMarker: "dev-seed:plan-1004-startup-multiple-debt-scenario",
+    businessStage: "startup",
+    businessProfile: "services",
+    openingAssets: [
+      {
+        category: "equipment",
+        amount: 1000,
+        depreciationYears: 5,
+      },
+    ],
+    startupCosts: [
+      {
+        category: "inventory",
+        amount: 2400,
+      },
+      {
+        category: "legal_accounting_fees",
+        amount: 1200,
+      },
+    ],
+    fundingSources: [
+      {
+        category: "owner_equity",
+        amount: 1000,
+      },
+      {
+        category: "commercial_loan",
+        amount: 1200,
+        interestRate: 0.12,
+        termMonths: 12,
+      },
+      {
+        category: "vehicle_loans",
+        amount: 2400,
+        interestRate: 0.12,
+        termMonths: 24,
+        monthlyPaymentOverride: 100,
+      },
+    ],
+    openingBalances: {
+      cash: 0,
+      accountsReceivable: 0,
+      prepaidExpenses: 0,
+      accountsPayable: 0,
+      accruedExpenses: 0,
+    },
+    capexLines: [
+      {
+        seedKey: "capex-equip",
+        category: "equipment",
+        depreciationYears: 2,
+        year2AnnualAmount: 1200,
+        year3AnnualAmount: 0,
+      },
+    ],
+    capexMonths: {
+      "capex-equip": [
+        {
+          monthIndex: 2,
+          amount: 600,
+        },
+      ],
+    },
+    taxSettings: {
+      year1TaxRate: 0,
+      year2TaxRate: 0,
+      year3TaxRate: 0,
+      amortizationYears: 3,
+    },
+  },
+  "ongoing-opening-balances": {
+    businessName: "PLAN-1004 Ongoing Opening Balances Seed",
+    companyName: "PLAN-1004 Ongoing Opening Balances LLC",
+    scenarioName: "Foundation ongoing opening balances seed",
+    businessMarker: "dev-seed:plan-1004-ongoing-opening-balances-business",
+    scenarioMarker: "dev-seed:plan-1004-ongoing-opening-balances-scenario",
+    businessStage: "ongoing",
+    businessProfile: "services",
+    openingAssets: [
+      {
+        category: "equipment",
+        amount: 6000,
+        depreciationYears: 3,
+      },
+    ],
+    startupCosts: [
+      {
+        category: "legal_accounting_fees",
+        amount: 1800,
+      },
+    ],
+    fundingSources: [
+      {
+        category: "outside_investors",
+        amount: 7800,
+      },
+    ],
+    openingBalances: {
+      cash: 10000,
+      accountsReceivable: 2000,
+      prepaidExpenses: 500,
+      accountsPayable: 1500,
+      accruedExpenses: 1000,
+    },
+    capexLines: [],
+    capexMonths: {},
+    taxSettings: {
+      year1TaxRate: 0,
+      year2TaxRate: 0,
+      year3TaxRate: 0,
+      amortizationYears: 3,
+    },
+  },
+};
+
+export const seedFoundationScenario = mutation({
+  args: {
+    fixtureKey: foundationFixtureKey,
+  },
+  handler: async (ctx, args) => {
+    const user = await ensureCurrentUser(ctx);
+    const fixture = FOUNDATION_SEED_FIXTURES[args.fixtureKey];
+    const existingBusinesses = await ctx.db
+      .query("businesses")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+    const activeSeedBusiness = existingBusinesses
+      .filter((business) => !business.archivedAt)
+      .find(
+        (business) =>
+          business.notes === fixture.businessMarker ||
+          business.name === fixture.businessName,
+      );
+
+    const businessId =
+      activeSeedBusiness?._id ??
+      (await ctx.db.insert("businesses", {
+        userId: user._id,
+        name: fixture.businessName,
+        companyName: fixture.companyName,
+        preparerName: user.fullName,
+        businessProfile: fixture.businessProfile,
+        businessStage: fixture.businessStage,
+        startMonth: 1,
+        startYear: 2026,
+        currencyCode: "USD",
+        countryRegion: "US",
+        notes: fixture.businessMarker,
+      }));
+
+    if (activeSeedBusiness) {
+      await ctx.db.patch(activeSeedBusiness._id, {
+        name: fixture.businessName,
+        companyName: fixture.companyName,
+        preparerName: user.fullName,
+        businessProfile: fixture.businessProfile,
+        businessStage: fixture.businessStage,
+        startMonth: 1,
+        startYear: 2026,
+        notes: fixture.businessMarker,
+      });
+    }
+
+    const scenarios = await ctx.db
+      .query("scenarios")
+      .withIndex("by_business", (q) => q.eq("businessId", businessId))
+      .collect();
+    const existingSeedScenario = scenarios.find(
+      (scenario) =>
+        scenario.notes === fixture.scenarioMarker ||
+        scenario.name === fixture.scenarioName,
+    );
+    const nextVersion = existingSeedScenario
+      ? existingSeedScenario.currentVersion + 1
+      : 1;
+
+    const scenarioId =
+      existingSeedScenario?._id ??
+      (await ctx.db.insert("scenarios", {
+        businessId,
+        name: fixture.scenarioName,
+        notes: fixture.scenarioMarker,
+        isBase: true,
+        status: "draft",
+        currentVersion: nextVersion,
+      }));
+
+    if (existingSeedScenario) {
+      await ctx.db.patch(existingSeedScenario._id, {
+        name: fixture.scenarioName,
+        notes: fixture.scenarioMarker,
+        isBase: true,
+        status: "draft",
+        currentVersion: nextVersion,
+      });
+    } else {
+      await appendScenarioVersion(ctx, {
+        scenarioId,
+        versionNumber: nextVersion,
+        createdByUserId: user._id,
+        changeSource: "system",
+        summary: `PLAN-1004 ${args.fixtureKey} foundation seed scenario created`,
+      });
+    }
+
+    if (existingSeedScenario) {
+      await appendScenarioVersion(ctx, {
+        scenarioId,
+        versionNumber: nextVersion,
+        createdByUserId: user._id,
+        changeSource: "system",
+        summary: `PLAN-1004 ${args.fixtureKey} foundation seed scenario refreshed`,
+      });
+    }
+
+    const [openingAssets, startupCosts, fundingSources, openingBalances, capexLines, taxSettings] =
+      await Promise.all([
+        ctx.db
+          .query("opening_assets")
+          .withIndex("by_scenario", (q) => q.eq("scenarioId", scenarioId))
+          .collect(),
+        ctx.db
+          .query("startup_costs")
+          .withIndex("by_scenario", (q) => q.eq("scenarioId", scenarioId))
+          .collect(),
+        ctx.db
+          .query("funding_sources")
+          .withIndex("by_scenario", (q) => q.eq("scenarioId", scenarioId))
+          .collect(),
+        ctx.db
+          .query("opening_balances")
+          .withIndex("by_scenario", (q) => q.eq("scenarioId", scenarioId))
+          .collect(),
+        ctx.db
+          .query("capex_lines")
+          .withIndex("by_scenario_category", (q) => q.eq("scenarioId", scenarioId))
+          .collect(),
+        ctx.db
+          .query("tax_settings")
+          .withIndex("by_scenario", (q) => q.eq("scenarioId", scenarioId))
+          .collect(),
+      ]);
+    const capexMonths = await Promise.all(
+      capexLines.map((line) =>
+        ctx.db
+          .query("capex_months")
+          .withIndex("by_capex_line_month", (q) => q.eq("capexLineId", line._id))
+          .collect(),
+      ),
+    ).then((months) => months.flat());
+
+    await deleteScenarioRecords({ ctx, rows: openingAssets });
+    await deleteScenarioRecords({ ctx, rows: startupCosts });
+    await deleteScenarioRecords({ ctx, rows: fundingSources });
+    await deleteScenarioRecords({ ctx, rows: openingBalances });
+    await deleteScenarioRecords({ ctx, rows: capexMonths });
+    await deleteScenarioRecords({ ctx, rows: capexLines });
+    await deleteScenarioRecords({ ctx, rows: taxSettings });
+
+    for (const asset of fixture.openingAssets) {
+      await ctx.db.insert("opening_assets", {
+        scenarioId,
+        category: asset.category,
+        amount: asset.amount,
+        depreciationYears: asset.depreciationYears,
+        notes: asset.notes,
+      });
+    }
+
+    for (const cost of fixture.startupCosts) {
+      await ctx.db.insert("startup_costs", {
+        scenarioId,
+        category: cost.category,
+        amount: cost.amount,
+        notes: cost.notes,
+      });
+    }
+
+    for (const source of fixture.fundingSources) {
+      await ctx.db.insert("funding_sources", {
+        scenarioId,
+        category: source.category,
+        amount: source.amount,
+        interestRate: source.interestRate,
+        termMonths: source.termMonths,
+        monthlyPaymentOverride: source.monthlyPaymentOverride,
+        notes: source.notes,
+      });
+    }
+
+    await ctx.db.insert("opening_balances", {
+      scenarioId,
+      cash: fixture.openingBalances.cash,
+      accountsReceivable: fixture.openingBalances.accountsReceivable,
+      prepaidExpenses: fixture.openingBalances.prepaidExpenses,
+      accountsPayable: fixture.openingBalances.accountsPayable,
+      accruedExpenses: fixture.openingBalances.accruedExpenses,
+    });
+
+    const insertedCapexLineIds = new Map<string, Id<"capex_lines">>();
+
+    for (const line of fixture.capexLines) {
+      const capexLineId = await ctx.db.insert("capex_lines", {
+        scenarioId,
+        category: line.category,
+        depreciationYears: line.depreciationYears,
+        year2AnnualAmount: line.year2AnnualAmount,
+        year3AnnualAmount: line.year3AnnualAmount,
+      });
+
+      insertedCapexLineIds.set(line.seedKey, capexLineId);
+    }
+
+    for (const [seedKey, months] of Object.entries(fixture.capexMonths)) {
+      const capexLineId = insertedCapexLineIds.get(seedKey);
+
+      if (!capexLineId) {
+        continue;
+      }
+
+      for (const month of months) {
+        await ctx.db.insert("capex_months", {
+          capexLineId,
+          monthIndex: month.monthIndex,
+          amount: month.amount,
+        });
+      }
+    }
+
+    await ctx.db.insert("tax_settings", {
+      scenarioId,
+      year1TaxRate: fixture.taxSettings.year1TaxRate,
+      year2TaxRate: fixture.taxSettings.year2TaxRate,
+      year3TaxRate: fixture.taxSettings.year3TaxRate,
+      amortizationYears: fixture.taxSettings.amortizationYears,
+    });
+
+    return {
+      fixtureKey: args.fixtureKey,
+      businessId,
+      scenarioId,
+      versionNumber: nextVersion,
+      overviewUrl: `/app/businesses/${businessId}/scenarios/${scenarioId}/overview`,
+      recalculateCommand: `npx convex run engine:recalculateScenario '{\"scenarioId\":\"${scenarioId}\"}'`,
     };
   },
 });

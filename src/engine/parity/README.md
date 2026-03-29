@@ -9,4 +9,10 @@ Implemented revenue fixture set for `npm run parity:revenue`:
 - `revenue-sales-override-precedence` - metric-level override precedence and traceability
 - `revenue-low-margin-windowed` - inactive month gating with a low-margin line
 
-Future parity backlog from the implementation PRD still includes broader cash, debt, and statement scenarios once those engine modules are implemented.
+Implemented foundation fixture set for `npm run parity:foundation`:
+
+- `foundation-startup-no-debt` - balanced opening funding, land exclusion, and straight-line foundation schedules
+- `foundation-startup-multiple-debt` - multi-debt amortization with a payment override and Year 2 CapEx fallback timing
+- `foundation-ongoing-opening-balances` - ongoing-business opening cash position plus persisted depreciation and amortization
+
+Future parity backlog from the implementation PRD still includes broader payroll, working-capital, cash-flow, statement, and ratio scenarios once those engine modules are implemented.
