@@ -14,6 +14,7 @@
     "parity:foundation": "tsx src/engine/parity/run-foundation-parity.ts",
     "parity:revenue": "tsx src/engine/parity/run-revenue-parity.ts",
     "verify:snapshots": "tsx scripts/verify-snapshots.ts",
+    "convex:run:manual": "tsx scripts/convex-run-manual.ts",
     "check": "npm run lint && npm run typecheck",
     "secrets:scan": "./scripts/gitleaks-scan"
   },
